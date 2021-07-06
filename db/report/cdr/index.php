@@ -7,16 +7,17 @@ $db = new PDO($config["db"], $config["username"], $config["password"], $config["
 
 $report = new ReportCdrRepository($db);
 
-switch($_SERVER["REQUEST_METHOD"]) {
+switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
         $result = $report->getAll(
-            array("start" => $_GET["start"],
- 		"end" => $_GET["end"],
-		"text" => $_GET["text"]));              
-        break;  
+            array(
+                "start" => $_GET["start"],
+                "end" => $_GET["end"],
+                "text" => $_GET["text"]
+            )
+        );
+        break;
 }
 
 header("Content-Type: application/json");
 echo  json_encode($result);
-
-?>

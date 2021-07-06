@@ -21,37 +21,40 @@ $config = include("db/config.php");
 
 session_start(); //Запускаем сессии
 
-class AuthClass {
+class AuthClass
+{
     private $_login = "demo"; //Устанавливаем логин
     private $_password = "demo"; //Устанавливаем пароль
 
-    public function isAuth() {
+    public function isAuth()
+    {
         if (isset($_SESSION["is_auth"])) { //Если сессия существует
             return $_SESSION["is_auth"]; //Возвращаем значение переменной сессии is_auth (хранит true если авторизован, false если не авторизован)
-        }
-        else return false; //Пользователь не авторизован, т.к. переменная is_auth не создана
+        } else return false; //Пользователь не авторизован, т.к. переменная is_auth не создана
     }
-    
-    public function auth($login, $passwors) {
+
+    public function auth($login, $passwors)
+    {
         if ($login == $this->_login && $passwors == $this->_password) { //Если логин и пароль введены правильно
             $_SESSION["is_auth"] = true; //Делаем пользователя авторизованным
             $_SESSION["login"] = $login; //Записываем в сессию логин пользователя
             return true;
-        }
-        else { //Логин и пароль не подошел
+        } else { //Логин и пароль не подошел
             $_SESSION["is_auth"] = false;
-            return false; 
+            return false;
         }
     }
-    
-    public function getLogin() {
+
+    public function getLogin()
+    {
         if ($this->isAuth()) { //Если пользователь авторизован
             return $_SESSION["login"]; //Возвращаем логин, который записан в сессию
         }
     }
-    
-    
-    public function out() {
+
+
+    public function out()
+    {
         $_SESSION = array(); //Очищаем сессию
         session_destroy(); //Уничтожаем
     }
@@ -72,8 +75,8 @@ if (isset($_GET["is_exit"])) { //Если нажата кнопка выхода
     }
 }
 
-if (!$auth->isAuth()) {   
-    die( '<!DOCTYPE html>
+if (!$auth->isAuth()) {
+    die('<!DOCTYPE html>
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="public/css/login.css" />
@@ -97,16 +100,16 @@ if (!$auth->isAuth()) {
 
 </body>
 </html>');
- } 
-
-
-
-if (empty($_GET["p"])) {     // if some page requested, then show it, else show page CDR
-	$page = 'rep.cdr';
-} else {
-  	$page = $_GET["p"];
 }
-		
+
+
+
+if (empty($_GET["p"])) {// if some page requested, then show it, else show page CDR
+    $page = 'rep.cdr';
+} else {
+    $page = $_GET["p"];
+}
+
 echo '<!DOCTYPE html>
 <html>
 <head>
@@ -121,35 +124,34 @@ echo '<!DOCTYPE html>
         <h1>Asterisk</h1>
         <ul>
             <li>Report 
-		<ul>
-		<li><a href="index.php?p=rep.cdr" >Call records</a></li>
-		<li><a href="index.php?p=rep.cdr.ext" >Call records extended</a></li>
-		<li><a href="index.php?p=rep.noanswer" >Not answered</a></li>
-		<li><a href="index.php?p=rep.group.ext.cdr">Group by Extension</a></li>
-		</ul>
-	   </li>
+        <ul>
+        <li><a href="index.php?p=rep.cdr" >Call records</a></li>
+        <li><a href="index.php?p=rep.cdr.ext" >Call records extended</a></li>
+        <li><a href="index.php?p=rep.noanswer" >Not answered</a></li>
+        <li><a href="index.php?p=rep.group.ext.cdr">Group by Extension</a></li>
+        </ul>
+       </li>
             <li>Queue 
-		<ul>
-		<li><a href="index.php?p=queue">Show status</a></li>
-		</ul>
-	   </li>
+        <ul>
+        <li><a href="index.php?p=queue">Show status</a></li>
+        </ul>
+       </li>
             <li>Diagnostics 
-		<ul>
-		<li><a href="index.php?p=diag.total" >Total</a></li>
-		<li><a href="index.php?p=diag.database">Database</a></li>
-		<li><a href="index.php?p=sip.registry" >Sip Registry</a></li>
-		<li><a href="index.php?p=sip.peers" >Sip Peers</a></li>
-		<li><a href="index.php?p=sip.channels" >Channels</a></li>
-		<li><a href="index.php?p=sip.channelstats" >Channel Stats</a></li>
-		</ul>
-	    </li>
+        <ul>
+        <li><a href="index.php?p=diag.total" >Total</a></li>
+        <li><a href="index.php?p=diag.database">Database</a></li>
+        <li><a href="index.php?p=sip.registry" >Sip Registry</a></li>
+        <li><a href="index.php?p=sip.peers" >Sip Peers</a></li>
+        <li><a href="index.php?p=sip.channels" >Channels</a></li>
+        <li><a href="index.php?p=sip.channelstats" >Channel Stats</a></li>
+        </ul>
+        </li>
             <li><a href="/?is_exit=1">Logout</a></li> 
-	    </li>
+        </li>
         </ul>
     </div>
     <div class="index-frame">
-        <iframe name="index" src="view/'.$page.'.php"></iframe>
+        <iframe name="index" src="view/' . $page . '.php"></iframe>
     </div>
 </body>
 </html>';
-
