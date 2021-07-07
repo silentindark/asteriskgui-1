@@ -44,4 +44,3 @@ class SipRegistryRepository {
         return $json;
     }
 }
-
