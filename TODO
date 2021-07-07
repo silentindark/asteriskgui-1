@@ -6,14 +6,6 @@
 // PHP Notice:  Undefined offset: 24 in /var/www/IS_TEST_GUI/models/diag/sip_channels.php on line 83,
 // referer: http://c2virtpbx01.is74.ru/IS_TEST_GUI/view/sip.channels.php
 
-// [Wed Jul 07 16:19:01.404194 2021] [:error] [pid 9076] [client 10.80.32.56:56336] 
-// PHP Notice:  Undefined index: clid in /var/www/IS_TEST_GUI/models/diag/sip_peers.php on line 9, 
-// referer: http://c2virtpbx01.is74.ru/IS_TEST_GUI/view/sip.peers.php
-
-// [Wed Jul 07 16:19:01.406376 2021] [:error] [pid 9076] [client 10.80.32.56:56336] 
-// PHP Notice:  Undefined offset: 510 in /var/www/IS_TEST_GUI/models/diag/sip_peers.php on line 46, 
-// referer: http://c2virtpbx01.is74.ru/IS_TEST_GUI/view/sip.peers.php
-
 // [Wed Jul 07 16:16:31.055440 2021] [:error] [pid 1668] [client 10.80.32.56:53130] 
 // PHP Notice:  Undefined offset: 38 in /var/www/IS_TEST_GUI/models/diag/database.php on line 20, 
 // referer: http://c2virtpbx01.is74.ru/IS_TEST_GUI/view/diag.database.php
@@ -27,4 +19,4 @@
 // referer: http://c2virtpbx01.is74.ru/IS_TEST_GUI/view/queue.php
 
 Адаптировать запросы под ams50*.cdr - пока CDR_view не работает
- 
+Переделать все пути на использование dirname(__FILE__)

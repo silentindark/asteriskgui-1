@@ -11,13 +11,14 @@ $sippeer = new SipPeerRepository();
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
+        error_log("ast: call command ".var_export($_GET, true).PHP_EOL);
         $result = $sippeer->getAll(
             array(
-                "name" => $_GET["name"],
-                "ip" => $_GET["ip"],
-                "port" => $_GET["port"],
-                "state" => $_GET["state"],
-                "desc" => $_GET["desc"]
+                'objectname' => $_GET['objectname'],
+                'ipaddress' => $_GET['ipaddress'],
+                'ipport' => $_GET['ipport'],
+                'status' => $_GET['status'],
+                'description' => $_GET['description']
             )
         );
         break;

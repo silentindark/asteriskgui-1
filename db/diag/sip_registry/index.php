@@ -10,8 +10,10 @@ switch ($_SERVER["REQUEST_METHOD"]) {
         $result = $sipregistry->getAll(
             array(
                 "host" => $_GET["host"],
+                "port" => $_GET["port"],
                 "username" => $_GET["username"],
-                "state" => $_GET["state"]
+                "state" => $_GET["state"],
+                "registration time" => $_GET["registration time"]
             )
         );
         break;
