@@ -1,6 +1,6 @@
 <?php
 
-$config = include("../../db/config.php");
+$config = include dirname(__FILE__) . "/../../db/config.php";
 
 class ReportCdr
 {
