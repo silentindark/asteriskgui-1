@@ -77,9 +77,9 @@ class ReportCdrRepository {
     public function getAll($filter)
     {
         if (is_null($filter["start"]) || $filter["start"] == '0' || is_null($filter["end"]) || $filter["end"] == '0') {
-            $calldate_range = "WHERE calldate BETWEEN '".$filter["start"]." 00:00:00' AND '".$filter["end"]." 23:59:59'";
-        } else {
             $calldate_range = "";
+        } else {
+            $calldate_range = "WHERE calldate BETWEEN '".$filter["start"]." 00:00:00' AND '".$filter["end"]." 23:59:59'";
         }
         if (is_null($filter["limit"]) || $filter["limit"] == '0') {
             $limit = '20';
