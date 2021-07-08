@@ -2,8 +2,7 @@
 
 $config = include dirname(__FILE__) . "/../../db/config.php";
 
-class ReportCdr
-{
+class ReportCdr {
     public $calldate;
     public $clid;
     public $clidrb;
@@ -21,19 +20,14 @@ class ReportCdr
     public $lastdata;
 }
 
-class ReportCdrRepository
-{
-
+class ReportCdrRepository {
     protected $db;
 
-
-    public function __construct(PDO $db)
-    {
+    public function __construct(PDO $db) {
         $this->db = $db;
     }
 
-    private function read($row)
-    {
+    private function read($row) {
         $result = new ReportCdr();
 
         $result->calldate = $row["calldate"];
@@ -67,61 +61,42 @@ class ReportCdrRepository
 
         return $result;
     }
+
+    private function read_cdr($row) {
+        $result = new ReportCdr();
+
+        $result->calldate = $row["calldate"];
+        $result->src = $row["src"];
+        $result->dst = $row["dst"];
+        $result->disposition = $row["disposition"];
+        $result->duration = $row["duration"];
+
+        return $result;
+    }
+
     public function getAll($filter)
     {
-        $text = $filter["text"];
-
-        //$callstart = implode(",", $filter["start"]);
-        //$callstart = substr($callstart, 0, strpos($callstart, '('));
-        $callstart = date("Y-m-d", strtotime($filter["start"]));
-        if ($callstart == "1970-01-01") {
-            $callstart = date("Y-m-d");
+        if (is_null($filter["start"]) || $filter["start"] == '0' || is_null($filter["end"]) || $filter["end"] == '0') {
+            $calldate_range = "WHERE calldate BETWEEN '".$filter["start"]." 00:00:00' AND '".$filter["end"]." 23:59:59'";
+        } else {
+            $calldate_range = "";
         }
-        $start = $callstart;
-
-        //$callend = implode(",", $filter["end"]);
-        //$callend = substr($callend, 0, strpos($callend, '('));
-        $callend = date("Y-m-d", strtotime($filter["end"]));
-        if ($callend == "1970-01-01") {
-            $callend = date("Y-m-d");
+        if (is_null($filter["limit"]) || $filter["limit"] == '0') {
+            $limit = '20';
+        } else {
+            $limit = $filter["limit"];
         }
-        $end = $callend;
 
-
-        $sql = "SELECT 
-          (SELECT min(cid_num) from cel where eventtype='ANSWER' and cdr.uniqueid=cel.linkedid) as cc,
-          (SELECT max(cid_num) from cel where eventtype='ANSWER' and cdr.uniqueid=cel.linkedid) as whois,
-          (SELECT max(cid_ani) from cel where eventtype='ANSWER' and cdr.uniqueid=cel.linkedid) as whois_man,
-          min(calldate) as calldate, 
-          src, dst, max(dst) as ext, 
-          (SELECT cid_name from cel where cdr.uniqueid=cel.linkedid and cid_name like '%:%'  order by calldate desc limit 1) as clidrb, 
-          (SELECT cid_name from cel where cdr.uniqueid=cel.linkedid and length(cid_name)>2 and cid_name not like '% %' order by calldate desc limit 1) as clid2,
-          sum(duration) as duration, 
-          max(disposition) as disposition, 
-          channel, 
-          RIGHT(LEFT(channel, 7),3) as number,
-          dcontext, 
-          did, 
-          clid,
-          recordingfile
-		FROM cdr 
-		where 
-		((recordingfile LIKE 'q-%')or(recordingfile LIKE 'in-%')) and (calldate BETWEEN '$start 00:00:00' AND '$end 23:59:59')
-		and (concat(clid, src, dst, dcontext, dstchannel, lastapp, lastdata) like '%$text%')
-		and (dst!='s') and (dst!='t') and (dst!='i') and (dst!='hangup')and (dst not like 'ivr%')
-		and (dst not like 'black%')
-            GROUP BY cdr.recordingfile
-		order by calldate desc";
+        $sql = "SELECT calldate, src, dst, disposition, duration FROM cdr ".$calldate_range." ORDER BY calldate DESC LIMIT ".$limit;
+        $result = array();
         $q = $this->db->prepare($sql);
         $q->execute();
         $rows = $q->fetchAll();
-
-        $result = array();
-        foreach ($rows as $row) {
-
-            array_push($result, $this->read($row));
+        if (!empty($rows)) {
+            foreach ($rows as $row) {
+                array_push($result, $this->read_cdr($row));
+            }
         }
         return $result;
-        //echo $result;
     }
 }

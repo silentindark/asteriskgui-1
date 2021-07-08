@@ -13,7 +13,7 @@ switch ($_SERVER["REQUEST_METHOD"]) {
             array(
                 "start" => $_GET["start"],
                 "end" => $_GET["end"],
-                "text" => $_GET["text"]
+                "limit" => $_GET["limit"]
             )
         );
         break;
