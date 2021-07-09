@@ -8,8 +8,8 @@ $(function () {
     var mm = today.getMonth() + 1; //January is 0!
     var yyyy = today.getFullYear();
     var start1 = 0;
-    var text1 = '';
-    var phone1 = '';
+    var calls_limit = '20';
+    var search_number = '';
     var end1 = 0;
 
     if (dd < 10) {
@@ -23,17 +23,18 @@ $(function () {
     today = mm + '/' + dd + '/' + yyyy;
 
     function myRefresh() {
-        text1 = $("#searchtext").value;
+        calls_limit = $("#calls_limit").value;
+        search_number = $("#search_number").value;
         $("#content").jsGrid("search");
     }
 
-    $("#searchtext").change(function () {
-        text1 = this.value;
+    $("#calls_limit").change(function () {
+        calls_limit = this.value;
         $("#content").jsGrid("search");
     });
 
-    $("#phonetext").change(function () {
-        phone1 = this.value;
+    $("#search_number").change(function () {
+        search_number = this.value;
         $("#content").jsGrid("search");
     });
 
@@ -53,7 +54,7 @@ $(function () {
         });
 
     $("#but_excel a").click(function () {
-        window.location.replace("../db/report/cdr/download.php?start=" + start1 + "&end=" + end1 + "&text=" + text1 + "&phone=" + phone1);
+        window.location.replace("../db/report/cdr/download.php?start=" + start1 + "&end=" + end1 + "&calls_limit=" + calls_limit + "&search_number=" + search_number);
     });
 
     DATA = null;
@@ -74,12 +75,11 @@ $(function () {
             loadData: function (filter) {
                 var start = start1;
                 var end = end1;
-                var text = text1;
-                console.log(text);
+                console.log(calls_limit);
 
                 return $.ajax({
                     type: "GET",
-                    url: "../db/report/cdr/?start=" + start + "&end=" + end + "&text=" + text + "&phone=" + phone1,
+                    url: "../db/report/cdr/?start=" + start + "&end=" + end + "&calls_limit=" + calls_limit + "&search_number=" + search_number,
                     success: function (data) {
                         json_data = data;  //store to global var for exporting
                         var counter = data.length;
@@ -138,6 +138,7 @@ $(function () {
             { name: "dst", title: "Вызываемый", type: "text", width: 100 },
             { name: "disposition", title: "Состояние", type: "text", width: 100 },
             { name: "duration", title: "Длительность звонка", type: "text", width: 100 },
+            { name: "billsec", title: "Длительность разговора", type: "text", width: 100 },
         ],
         onDataLoaded: function (data) {
         },

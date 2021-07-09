@@ -70,24 +70,38 @@ class ReportCdrRepository {
         $result->dst = $row["dst"];
         $result->disposition = $row["disposition"];
         $result->duration = $row["duration"];
+        $result->billsec = $row["billsec"];
 
         return $result;
     }
 
-    public function getAll($filter)
-    {
-        if (is_null($filter["start"]) || $filter["start"] == '0' || is_null($filter["end"]) || $filter["end"] == '0') {
-            $calldate_range = "";
-        } else {
-            $calldate_range = "WHERE calldate BETWEEN '".$filter["start"]." 00:00:00' AND '".$filter["end"]." 23:59:59'";
+    private function generate_conditions($filter) {
+        $result = [];
+
+        if (!is_null($filter["start"]) && $filter["start"] != '0' && is_null($filter["end"]) && $filter["end"] != '0') {
+            array_push($result, "calldate BETWEEN '".$filter["start"]." 00:00:00' AND '".$filter["end"]." 23:59:59'");
         }
-        if (is_null($filter["limit"]) || $filter["limit"] == '0') {
-            $limit = '20';
-        } else {
-            $limit = $filter["limit"];
+        if (!is_null($filter["search_number"]) && $filter["search_number"] != '') {
+            array_push($result, "src LIKE '%".$filter["search_number"]."%' OR dst LIKE '%".$filter["search_number"]."%'");
         }
 
-        $sql = "SELECT calldate, src, dst, disposition, duration FROM cdr ".$calldate_range." ORDER BY calldate DESC LIMIT ".$limit;
+        return $result;
+    }
+
+    public function getAll($filter) {
+        $conditions = $this->generate_conditions($filter);
+        $condition = '';
+        if (!empty($conditions)) {
+            $condition = 'WHERE '.implode(' AND ', $conditions);
+        }
+
+        if (is_null($filter["calls_limit"]) || $filter["calls_limit"] == '' || $filter["calls_limit"] == '0') {
+            $limit = '20';
+        } else {
+            $limit = $filter["calls_limit"];
+        }
+
+        $sql = "SELECT calldate, src, dst, disposition, duration, billsec FROM cdr ".$condition." ORDER BY calldate DESC LIMIT ".$limit;
         $result = array();
         $q = $this->db->prepare($sql);
         $q->execute();

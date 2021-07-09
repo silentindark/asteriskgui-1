@@ -10,8 +10,9 @@ echo '<script src="../public/report_cdr.js"></script>
 
     <div class="config_panel">
     <form class="form-inline" onSubmit="return myRefresh();">
-        <label class="checkbox-inline">Dates <input type="text" class="form-control" id="daterange" value=""></label>
-        <label class="checkbox-inline">Text <input type="text" class="form-control" id="searchtext" value="" ></label>
+        <label class="checkbox-inline">За период<input type="text" class="form-control" id="daterange" value=""></label>
+        <label class="checkbox-inline">последние<input type="text" class="form-control" id="calls_limit" value="20" >звонков</label>
+        <label class="checkbox-inline">искать номер<input type="text" class="form-control" id="search_number" value="" ></label>
     </form>
     </div>
 
