@@ -15,16 +15,20 @@
 
 $page = '';
 
-require_once 'db/config.php';
-
-$config = include("db/config.php");
+require_once 'db/pami_config.php';
 
 session_start(); //Запускаем сессии
 
 class AuthClass
 {
-    private $_login = "demo"; //Устанавливаем логин
-    private $_password = "demo"; //Устанавливаем пароль
+    private $_login;
+    private $_password;
+
+    function __construct() {
+        $config = include("db/pami_config.php");
+        $this->_login = $config['User']['login']; //Устанавливаем логин
+        $this->_password = $config['User']['password']; //Устанавливаем пароль
+    }
 
     public function isAuth()
     {

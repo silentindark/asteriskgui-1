@@ -16,5 +16,9 @@ return array(
         'secret' => 'monitoring_pass',
         'connect_timeout' => 10000,
         'read_timeout' => 10000
+    ),
+    "User" => array(
+        'login' => 'admin',
+        'password' => 'Qwestions'
     )
 );
