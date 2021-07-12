@@ -139,6 +139,7 @@ $(function () {
             { name: "disposition", title: "Состояние", type: "text", width: 100 },
             { name: "duration", title: "Длительность звонка", type: "text", width: 100 },
             { name: "billsec", title: "Длительность разговора", type: "text", width: 100 },
+            { name: "recording", title: "Аудиозапись разговора", type: "text", width: 100 },
         ],
         onDataLoaded: function (data) {
         },

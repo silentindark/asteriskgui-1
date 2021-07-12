@@ -71,6 +71,7 @@ class ReportCdrRepository {
         $result->disposition = $row["disposition"];
         $result->duration = $row["duration"];
         $result->billsec = $row["billsec"];
+        $result->recording = $row["recording"];
 
         return $result;
     }
@@ -101,7 +102,7 @@ class ReportCdrRepository {
             $limit = $filter["calls_limit"];
         }
 
-        $sql = "SELECT calldate, src, dst, disposition, duration, billsec FROM cdr ".$condition." ORDER BY calldate DESC LIMIT ".$limit;
+        $sql = "SELECT calldate, src, dst, disposition, duration, billsec, recording FROM cdr ".$condition." ORDER BY calldate DESC LIMIT ".$limit;
         $result = array();
         $q = $this->db->prepare($sql);
         $q->execute();
