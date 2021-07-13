@@ -109,6 +109,7 @@ class ReportCdrRepository {
         while ($row = $rows->fetch_assoc()) {
             array_push($result, $this->read_cdr($row));
         }
+
         return $result;
     }
 }

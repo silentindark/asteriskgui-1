@@ -40,7 +40,7 @@ class SipPeerRepository {
                 }
             }
         }
-        //error_log("ast: ".$row.PHP_EOL);
+
         return $json;
     }
 }
