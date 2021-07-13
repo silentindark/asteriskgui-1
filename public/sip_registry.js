@@ -41,7 +41,7 @@ $(function () {
             { name: "port", title: "Port", type: "text", width: 100 },
             { name: "username", title: "Username", type: "text", width: 100 },
             { name: "state", title: "State", type: "text", width: 100 },
-            { name: "registration time", title: "Registration time", type: "text", width: 100 }
+            { name: "registration_time", title: "Registration time", type: "text", width: 100 }
         ],
         onDataLoaded: function (data) {
         },

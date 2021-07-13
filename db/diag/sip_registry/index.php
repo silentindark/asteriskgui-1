@@ -13,7 +13,7 @@ switch ($_SERVER["REQUEST_METHOD"]) {
                 "port" => $_GET["port"],
                 "username" => $_GET["username"],
                 "state" => $_GET["state"],
-                "registration time" => $_GET["registration time"]
+                "registration_time" => $_GET["registration_time"]
             )
         );
         break;

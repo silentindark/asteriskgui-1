@@ -18,5 +18,5 @@
 // PHP Notice:  Undefined offset: 24 in /var/www/IS_TEST_GUI/models/queue/status.php on line 100, 
 // referer: http://c2virtpbx01.is74.ru/IS_TEST_GUI/view/queue.php
 
-Адаптировать запросы под ams50*.cdr - пока CDR_view не работает
 Переделать все пути на использование dirname(__FILE__)
+database подтягивает неизвестно что, пока прибрал

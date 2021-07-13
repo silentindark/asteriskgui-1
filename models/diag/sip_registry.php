@@ -26,7 +26,7 @@ class SipRegistryRepository {
                             'port' => $event['port'],
                             'username' =>  $event['username'],
                             'state' => $event['state'],
-                            'registration time' => gmdate("D, d M Y H:i:s T", $event['registrationtime'])
+                            'registration_time' => gmdate("D, d M Y H:i:s T", $event['registrationtime'])
                         ));
                     }
                 } else {
@@ -35,7 +35,7 @@ class SipRegistryRepository {
                         'port' => $event['port'],
                         'username' =>  $event['username'],
                         'state' => $event['state'],
-                        'registration time' => gmdate("D, d M Y H:i:s T", $event['registrationtime'])
+                        'registration_time' => gmdate("D, d M Y H:i:s T", $event['registrationtime'])
                     ));
                 }
             }
