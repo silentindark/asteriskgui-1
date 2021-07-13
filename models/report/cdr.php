@@ -1,6 +1,6 @@
 <?php
 
-$config = include dirname(__FILE__) . "/../../db/config.php";
+$config = include dirname(__FILE__) . "/../../db/pami_config.php";
 
 class ReportCdr {
     public $calldate;
@@ -23,7 +23,7 @@ class ReportCdr {
 class ReportCdrRepository {
     protected $db;
 
-    public function __construct(PDO $db) {
+    public function __construct($db) {
         $this->db = $db;
     }
 
@@ -104,13 +104,10 @@ class ReportCdrRepository {
 
         $sql = "SELECT calldate, src, dst, disposition, duration, billsec, recording FROM cdr ".$condition." ORDER BY calldate DESC LIMIT ".$limit;
         $result = array();
-        $q = $this->db->prepare($sql);
-        $q->execute();
-        $rows = $q->fetchAll();
-        if (!empty($rows)) {
-            foreach ($rows as $row) {
-                array_push($result, $this->read_cdr($row));
-            }
+        $rows = $this->db->query($sql);
+        //$q->execute();
+        while ($row = $rows->fetch_assoc()) {
+            array_push($result, $this->read_cdr($row));
         }
         return $result;
     }

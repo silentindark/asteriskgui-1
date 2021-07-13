@@ -1,7 +1,7 @@
 <?php
-include "../../../models/report/cdr.php";
+include dirname(__FILE__) . "/../../../models/report/cdr.php";
 
-$config = include("../../config.php");
+$config = include(dirname(__FILE__) . "/../../pami_config.php");
 
 $db = new PDO($config["db"], $config["username"], $config["password"], $config["options"]);
 

@@ -25,20 +25,18 @@ class AuthClass
     private $_password;
 
     function __construct() {
-        $config = include("db/pami_config.php");
+        $config = include(dirname(__FILE__) . "/db/pami_config.php");
         $this->_login = $config['User']['login']; //Устанавливаем логин
         $this->_password = $config['User']['password']; //Устанавливаем пароль
     }
 
-    public function isAuth()
-    {
+    public function isAuth() {
         if (isset($_SESSION["is_auth"])) { //Если сессия существует
             return $_SESSION["is_auth"]; //Возвращаем значение переменной сессии is_auth (хранит true если авторизован, false если не авторизован)
         } else return false; //Пользователь не авторизован, т.к. переменная is_auth не создана
     }
 
-    public function auth($login, $passwors)
-    {
+    public function auth($login, $passwors) {
         if ($login == $this->_login && $passwors == $this->_password) { //Если логин и пароль введены правильно
             $_SESSION["is_auth"] = true; //Делаем пользователя авторизованным
             $_SESSION["login"] = $login; //Записываем в сессию логин пользователя
@@ -49,16 +47,14 @@ class AuthClass
         }
     }
 
-    public function getLogin()
-    {
+    public function getLogin() {
         if ($this->isAuth()) { //Если пользователь авторизован
             return $_SESSION["login"]; //Возвращаем логин, который записан в сессию
         }
     }
 
 
-    public function out()
-    {
+    public function out() {
         $_SESSION = array(); //Очищаем сессию
         session_destroy(); //Уничтожаем
     }
@@ -108,7 +104,7 @@ if (!$auth->isAuth()) {
 
 
 
-if (empty($_GET["p"])) {// if some page requested, then show it, else show page CDR
+if (empty($_GET["p"])) { // if some page requested, then show it, else show page CDR
     $page = 'rep.cdr';
 } else {
     $page = $_GET["p"];
@@ -130,9 +126,11 @@ echo '<!DOCTYPE html>
             <li>Report 
         <ul>
         <li><a href="index.php?p=rep.cdr" >Call records</a></li>
+<!--
         <li><a href="index.php?p=rep.cdr.ext" >Call records extended</a></li>
         <li><a href="index.php?p=rep.noanswer" >Not answered</a></li>
         <li><a href="index.php?p=rep.group.ext.cdr">Group by Extension</a></li>
+-->
         </ul>
        </li>
             <li>Queue 

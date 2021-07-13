@@ -1,6 +1,6 @@
 <?php
-include "../../../models/diag/sip_registry.php";
-$config = include("../../config.php");
+include dirname(__FILE__) . "/../../../models/diag/sip_registry.php";
+$config = include(dirname(__FILE__) . "/../../pami_config.php");
 
 $sipregistry = new SipRegistryRepository();
 //error_log("ast: call command ".PHP_EOL);
