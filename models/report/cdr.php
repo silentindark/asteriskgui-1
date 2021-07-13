@@ -92,7 +92,7 @@ class ReportCdrRepository {
     public function getAll($filter) {
         $conditions = $this->generate_conditions($filter);
         $condition = '';
-        if (!empty($conditions)) {
+        if ($conditions) {
             $condition = 'WHERE '.implode(' AND ', $conditions);
         }
 
