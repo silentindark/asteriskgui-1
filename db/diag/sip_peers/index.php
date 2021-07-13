@@ -11,7 +11,6 @@ $sippeer = new SipPeerRepository();
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
-        error_log("ast: call command ".var_export($_GET, true).PHP_EOL);
         $result = $sippeer->getAll(
             array(
                 'objectname' => $_GET['objectname'],
