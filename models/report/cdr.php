@@ -79,7 +79,7 @@ class ReportCdrRepository {
     private function generate_conditions($filter) {
         $result = [];
 
-        if (!is_null($filter["start"]) && $filter["start"] != '0' && is_null($filter["end"]) && $filter["end"] != '0') {
+        if (!is_null($filter["start"]) && $filter["start"] != '0' && !is_null($filter["end"]) && $filter["end"] != '0') {
             array_push($result, "calldate BETWEEN '".$filter["start"]." 00:00:00' AND '".$filter["end"]." 23:59:59'");
         }
         if (!is_null($filter["search_number"]) && $filter["search_number"] != '') {
