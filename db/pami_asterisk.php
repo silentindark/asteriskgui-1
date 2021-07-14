@@ -7,10 +7,11 @@ require(implode(DIRECTORY_SEPARATOR, array(
 )));
 
 use PAMI\Client\Impl\ClientImpl as PamiClient;
-use PAMI\Message\Event\EventMessage;
 use PAMI\Listener\IEventListener;
-use PAMI\Message\Action\SIPShowRegistryAction;
+use PAMI\Message\Action\CoreShowChannelsAction;
 use PAMI\Message\Action\SIPPeersAction;
+use PAMI\Message\Action\SIPShowRegistryAction;
+use PAMI\Message\Event\EventMessage;
 
 class A implements IEventListener {
     public function handle(EventMessage $event) {
@@ -33,9 +34,9 @@ class PAMI_AsteriskMGMT {
         $this->pami_asterisk->unregisterEventListener($this->listener_id);
     }
 
-    public function sip_show_registry() {
+    public function core_show_channels() {
         $this->pami_asterisk->open();
-        $res = $this->pami_asterisk->send(new SIPShowRegistryAction());
+        $res = $this->pami_asterisk->send(new CoreShowChannelsAction());
         $this->pami_asterisk->close();
         return $res;
     }
@@ -43,6 +44,13 @@ class PAMI_AsteriskMGMT {
     public function sip_peers() {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new SIPPeersAction());
+        $this->pami_asterisk->close();
+        return $res;
+    }
+
+    public function sip_show_registry() {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new SIPShowRegistryAction());
         $this->pami_asterisk->close();
         return $res;
     }

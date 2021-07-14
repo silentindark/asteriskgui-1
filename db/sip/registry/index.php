@@ -1,5 +1,5 @@
 <?php
-include dirname(__FILE__) . "/../../../models/diag/sip_registry.php";
+include dirname(__FILE__) . "/../../../models/sip/registry.php";
 $config = include(dirname(__FILE__) . "/../../pami_config.php");
 
 $sipregistry = new SipRegistryRepository();

@@ -1,5 +1,5 @@
 <?php
-include dirname(__FILE__) . "/../../../models/diag/sip_peers.php";
+include dirname(__FILE__) . "/../../../models/sip/peers.php";
 $config = include(dirname(__FILE__) . "/../../pami_config.php");
 
 //$db = new PDO($config["db"], $config["username"], $config["password"], $config["options"]);

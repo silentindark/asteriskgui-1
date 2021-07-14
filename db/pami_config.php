@@ -6,14 +6,14 @@ return array(
     "users" => array('admin' => 'password', 'user' => 'user'),
     "MYSQL" => array(
         'server' => 'localhost',
-        'username' => 'ams5061',
+        'username' => 'admin',
         'password' => 'Qwestions',
-        'db' => 'ams5061',
+        'db' => 'asteriskcdr',
     ),
     "PAMI" => array(
         'host' => '127.0.0.1',
         'scheme' => 'tcp://',
-        'port' => 6061,
+        'port' => 5038,
         'username' => 'monitoring',
         'secret' => 'monitoring_pass',
         'connect_timeout' => 10000,
@@ -21,6 +21,6 @@ return array(
     ),
     "User" => array(
         'login' => 'admin',
-        'password' => 'Qwestions'
+        'password' => 'admin'
     )
 );
