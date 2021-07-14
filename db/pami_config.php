@@ -1,9 +1,8 @@
 <?php
 
 return array(
-    "logfile" => "/var/log/asterisk5061/full",
-    "monitor" => "/var/spool/asterisk5061/monitor/",
-    "users" => array('admin' => 'password', 'user' => 'user'),
+    "logfile" => "/var/log/asterisk/full",
+    "monitor" => "/var/spool/asterisk/monitor/",
     "MYSQL" => array(
         'server' => 'localhost',
         'username' => 'admin',
