@@ -1,6 +1,6 @@
 <?php
-include "../../../models/sip/channels.php";
-$config = include("../../config.php");
+include dirname(__FILE__) . "/../../../models/sip/channels.php";
+$config = include(dirname(__FILE__) . "/../../pami_config.php");
 
 $sipchannels = new SipChannelsRepository();
 //error_log("ast: call command ".PHP_EOL);

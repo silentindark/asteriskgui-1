@@ -28,14 +28,7 @@ $(function () {
                     data: filter,
                     success: function (data) {
                         json_data = data;  //store to global var for exporting
-
-                        var counter = data.length;
-                        // for (var i = 0; i < counter; i++) {
-                        //     BridgedChannel = data[i].BridgedChannel.split('-')[0];
-                        //     BridgedChannel = BridgedChannel.split('@')[0];
-                        //     data[i].BridgedChannel = BridgedChannel;
-                        // }
-                        $("#total").text("Channels: " + counter);
+                        $("#total").text("Channels: " + data.length);
                     },
                     complete: function () {
                         // Schedule the next request when the current one's complete
