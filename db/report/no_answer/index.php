@@ -9,15 +9,7 @@ $report = new ReportNoAnswerRepository($db);
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
-        $result = $report->getAll(
-            array(
-                "calldate" => $_GET["calldate"],
-                "clid" => $_GET["clid"],
-                "src" => $_GET["src"],
-                "dst" => $_GET["dst"],
-                "dcontext" => $_GET["dcontext"]
-            )
-        );
+        $result = $report->getAll($_GET);
         break;
 }
 

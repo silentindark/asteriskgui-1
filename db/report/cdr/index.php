@@ -10,14 +10,7 @@ $report = new ReportCdrRepository($db);
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
-        $result = $report->getAll(
-            array(
-                "start" => $_GET["start"],
-                "end" => $_GET["end"],
-                "calls_limit" => $_GET["calls_limit"],
-                "search_number" => $_GET["search_number"]
-            )
-        );
+        $result = $report->getAll($_GET);
         break;
 }
 

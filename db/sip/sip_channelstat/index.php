@@ -7,21 +7,7 @@ $sipchannelstat = new SipChannelstatRepository();
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
-        $result = $sipchannelstat->getAll(
-            array(
-                "peer" => $_GET["peer"],
-                "callid" => $_GET["callid"],
-                "duration" => $_GET["duration"],
-                "receive" => $_GET["receive"],
-                "lostp" => $_GET["lostp"],
-                "procentp" => $_GET["procentp"],
-                "jitterp" => $_GET["jitterp"],
-                "send" => $_GET["send"],
-                "losts" => $_GET["losts"],
-                "procents" => $_GET["procents"],
-                "jitters" => $_GET["jitters"]
-            )
-        );
+        $result = $sipchannelstat->getAll($_GET);
         break;
 }
 

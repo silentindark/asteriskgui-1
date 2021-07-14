@@ -9,12 +9,7 @@ $report = new ReportGroupExtCdrRepository($db);
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
-        $result = $report->getAll(
-            array(
-                "calldate" => $_GET["calldate"],
-                "src" => $_GET["src"]
-            )
-        );
+        $result = $report->getAll($_GET);
         break;
 }
 

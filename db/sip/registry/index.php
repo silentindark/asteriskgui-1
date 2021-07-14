@@ -7,15 +7,7 @@ $sipregistry = new SipRegistryRepository();
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
-        $result = $sipregistry->getAll(
-            array(
-                "host" => $_GET["host"],
-                "port" => $_GET["port"],
-                "username" => $_GET["username"],
-                "state" => $_GET["state"],
-                "registration_time" => $_GET["registration_time"]
-            )
-        );
+        $result = $sipregistry->getAll($_GET);
         break;
 }
 

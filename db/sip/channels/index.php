@@ -7,20 +7,7 @@ $sipchannels = new SipChannelsRepository();
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
-        $result = $sipchannels->getAll(
-            array(
-                "channel" => $_GET["channel"],
-                "calleridname" => $_GET["calleridname"],
-                "calleridnum" => $_GET["calleridnum"],
-                // "context" => $_GET["context"],
-                // "extension" => $_GET["extension"],
-                "duration" => $_GET["duration"],
-                "channelstatedesc" => $_GET["channelstatedesc"],
-                "bridgedchannel" => $_GET["bridgedchannel"],
-                "application" => $_GET["application"],
-                "applicationdata" => $_GET["applicationdata"]
-            )
-        );
+        $result = $sipchannels->getAll($_GET);
         break;
 }
 

@@ -5,11 +5,7 @@ $report = new QueueStatusRepository();
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
-        $f = '';
-        if (!empty($_GET["filter"])) $f = $_GET["filter"];
-        $result = $report->getAll(
-            array("filter" => $f)
-        );
+        $result = $report->getAll($_GET);
         break;
 }
 
