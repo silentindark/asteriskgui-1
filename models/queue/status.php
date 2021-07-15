@@ -1,14 +1,13 @@
 <?php
 
 include dirname(__FILE__) . "/../../db/asterisk.php";
+include dirname(__FILE__) . "/../../db/pami_asterisk.php";
 
-class QueueStatusRepository
-{
+class QueueStatusRepository {
 
     // ----------------------------------------------------------------------
 
-    private function SearchBusyInChannelList($channels, $number, $state)
-    {
+    private function SearchBusyInChannelList($channels, $number, $state) {
         for ($i = 1; $i < count($channels); $i++) {
             if ($channels[$i]["CallerIDNum"] == $number) {
                 $state = 'busy';
@@ -20,8 +19,7 @@ class QueueStatusRepository
 
     // ----------------------------------------------------------------------
 
-    private function SearchNumberInString($str)
-    {
+    private function SearchNumberInString($str) {
         //Local/104@from-queue-00000038;2
         $step3 = substr($str, 0, strpos($str, '@'));
         $step4 = substr($step3, strpos($step3, '/') + 1, 15);
@@ -30,8 +28,7 @@ class QueueStatusRepository
 
     // ----------------------------------------------------------------------
 
-    private function SearchNumberInQueuestring($str)
-    {
+    private function SearchNumberInQueuestring($str) {
         $step1 = explode('(', trim($str));
         $step2 = explode(' ', trim($step1[1]));
         $step3 = substr($step2[0], 0, strpos($step2[0], '@'));
@@ -41,8 +38,7 @@ class QueueStatusRepository
 
     // ----------------------------------------------------------------------
 
-    private function SearchStatusInPeersList($peers, $number)
-    {
+    private function SearchStatusInPeersList($peers, $number) {
         $state = 'na';
         for ($i = 0; $i < count($peers); $i++) {
             if ($peers[$i]["name"] == $number) {
@@ -57,151 +53,84 @@ class QueueStatusRepository
 
     // ----------------------------------------------------------------------
 
-    private function getChannels()
-    {
-
-        //send asterisk management command
-        $asterisk = new AsteriskMGMT();
-        $rows = $asterisk->Action('CoreShowChannels');
-
+    private function getChannels() {
         $json = array();
 
-        //search
-        $arr_rows = explode(PHP_EOL, $rows);
-        for ($first = 1; $first < count($arr_rows); $first++) {
-            if (stripos($arr_rows[$first], "Message: Channels will follow") !== false) break;
-        }
+        $asterisk_ami = new PAMI_AsteriskMGMT();
+        $data = $asterisk_ami->core_show_channels();
 
-        for ($i = $first + 1; $i < count($arr_rows); $i++) {
-
-            $Channel = '';
-            $Context = '';
-            $Extension = '';
-            $ChannelStateDesc = '';
-            $BridgedChannel = '';
-            $Application = '';
-            $ApplicationData = '';
-            $CallerIDnum = '';
-            $CallerIDname = '';
-            $Duration = '';
-
-
-            // Parse string from asterisk response
-            if (stripos($arr_rows[$i], "Event: c") !== false) break; //if find end message, then break
-
-            for ($n = $i; $n < count($arr_rows); $n++) {
-                $str = $arr_rows[$n];
-                if (stripos($str, "Channel:") !== false) {
-                    $Channel = trim(str_replace('Channel:', '', $str));
-                }
-                if (stripos($str, "Context:") !== false) {
-                    $Context = trim(str_replace('Context:', '', $str));
-                }
-                if (stripos($str, "Exten:") !== false) {
-                    $Extension = trim(str_replace('Exten:', '', $str));
-                }
-                if (stripos($str, "ChannelStateDesc:") !== false) {
-                    $ChannelStateDesc = trim(str_replace('ChannelStateDesc:', '', $str));
-                }
-                if (stripos($str, "BridgeId:") !== false) {
-                    $BridgedChannel = trim(str_replace('BridgeId:', '', $str));
-                }
-                if (stripos($str, "Application:") !== false) {
-                    $Application = trim(str_replace('Application:', '', $str));
-                }
-                if (stripos($str, "ApplicationData:") !== false) {
-                    $ApplicationData = trim(str_replace('ApplicationData:', '', $str));
-                }
-                if (stripos($str, "CallerIDNum:") !== false) {
-                    $CallerIDnum = trim(str_replace('CallerIDNum:', '', $str));
-                }
-                if (stripos($str, "ConnectedLineNum:") !== false) {
-                    $ConnectedLineNum = trim(str_replace('ConnectedLineNum:', '', $str));
-                }
-                if (stripos($str, "CallerIDName:") !== false) {
-                    $CallerIDname = trim(str_replace('CallerIDName:', '', $str));
-                }
-                if (stripos($str, "Duration:") !== false) {
-                    $Duration = trim(str_replace('Duration:', '', $str));
-                }
-                $i++;
-                if (stripos($arr_rows[$i], "Event: ") !== false) break; //if find end message, then break
-
+        foreach ($data->getEvents() as $record) {
+            $event = $record->getKeys();
+            if ($event['event'] == 'CoreShowChannel') {
+                unset($event['event']);
+                unset($event['actionid']);
+                array_push($json, $event);
             }
-
-            //$str = explode(" ", $str);
-            if (!empty($Channel))
-                array_push($json,  array(
-                    'Channel' =>  $Channel,
-                    'Context' =>  $Context,
-                    'Exten' =>  $Extension,
-                    'Duration' => $Duration,
-                    'BridgeId' => $BridgedChannel,
-                    'ChannelStateDesc' =>  $ChannelStateDesc,
-                    'Application' =>  $Application,
-                    'ApplicationData' =>  $ApplicationData,
-                    'CallerIDNum' =>  $CallerIDnum,
-                    'ConnectedLineNum' =>  $ConnectedLineNum,
-                    'CallerIDName' =>  $CallerIDname
-                ));
         }
-        //error_log("ast: ".$row.PHP_EOL);
+
+        return $json;
+    }
+
+    private function getPeers() {
+        $json = array();
+
+        $asterisk_ami = new PAMI_AsteriskMGMT();
+        $data = $asterisk_ami->sip_peers();
+
+        foreach ($data->getEvents() as $record) {
+            $event = $record->getKeys();
+            if ($event['event'] == 'PeerEntry') {
+                array_push($json,  array(
+                    'objectname' => $event['objectname'],
+                    'ipaddress' =>  $event['ipaddress'],
+                    'status' =>  $event['status'],
+                ));
+            }
+        }
+
+        return $json;
+    }
+
+    private function getQueuesStatuses() {
+        $json = array();
+        $queues = array();
+        $members = array();
+
+        $asterisk_ami = new PAMI_AsteriskMGMT();
+        $data = $asterisk_ami->queue_status();
+
+        foreach ($data->getEvents() as $record) {
+            $event = $record->getKeys();
+            if ($event['event'] == 'QueueParams') {
+                unset($event['event']);
+                unset($event['actionid']);
+                array_push($queues, $event);
+            } elseif ($event['event'] == 'QueueMember') {
+                unset($event['event']);
+                unset($event['actionid']);
+                array_push($members, $event);
+            }
+        }
+
+        foreach ($queues as $queue) {
+            $name = $queue['queue'];
+            unset($queue['queue']);
+            $json[$name] = $queue;
+            $json[$name]['members'] = array();
+        }
+
+        foreach ($members as $member) {
+            $queue = $member['queue'];
+            unset($member['queue']);
+            array_push($json[$queue]['members'], $member);
+        }
+
         return $json;
     }
 
     // ----------------------------------------------------------------------
 
-    private function getPeers()
-    {
-        //send asterisk management command
-        $asterisk = new AsteriskMGMT();
-        $rows = $asterisk->Action('Sippeers');
-
-        $json2 = array();
-
-        //search
-        $arr_rows = explode(PHP_EOL, $rows);
-        for ($first = 1; $first < count($arr_rows); $first++) {
-            if (stripos($arr_rows[$first], "Message: Peer status list will follow") !== false) break;
-        }
-
-        for ($i = $first + 1; $i < count($arr_rows); $i++) {
-            $name = '';
-            $ip = '';
-            $state = '';
-            // Parse string from asterisk response
-            if (stripos($arr_rows[$i], "Event: PeerlistComplete") !== false) break; //if find end message, then break
-
-            for ($n = $i; $n < count($arr_rows); $n++) {
-                $str = $arr_rows[$n];
-                if (stripos($str, "ObjectName:") !== false) {
-                    $name = trim(str_replace('ObjectName:', '', $str));
-                }
-                if (stripos($str, "IPaddress:") !== false) {
-                    $ip = trim(str_replace('IPaddress:', '', $str));
-                }
-                if (stripos($str, "Status:") !== false) {
-                    $state = trim(str_replace('Status:', '', $str));
-                }
-                $i++;
-                if (stripos($arr_rows[$i], "Event: ") !== false) break; //if find end message, then break
-            }
-
-            if (!empty($name))
-                array_push($json2,  array(
-                    'name' => $name,
-                    'ip' =>  $ip,
-                    'state' =>  $state
-                ));
-        }
-        //error_log("ast: ".$row.PHP_EOL);
-        return $json2;
-    }
-
-    // ----------------------------------------------------------------------
-
-    public function getAll($filter)
-    {
+    public function getAll($filter) {
         // filter vars
         if ($filter["filter"]) {
             $ffilter = $filter["filter"];
@@ -299,15 +228,14 @@ class QueueStatusRepository
                         ));
                 }
             }
-            for ($c = 0; $c < count($channels); $c++) {
-                $str = $channels[$c];
-                if (($str["Application"] == "AppQueue") && ($str["Exten"] == $queue_num)) {  //
+            foreach ($channels as $channel) {
+                if (($channel["application"] == "AppQueue") && ($channel["exten"] == $queue_num)) {  //
                     array_push($callers,  array(
-                        'from' => $str["ConnectedLineNum"],
-                        'state' => $str["ChannelStateDesc"],
-                        'to' =>   $this->SearchNumberInString($str["Channel"]),
-                        'queue' => $str["Exten"],
-                        'time' => $str["Duration"]
+                        'from' => $str["connectedlineNum"],
+                        'state' => $str["channelstatedesc"],
+                        'to' =>   $this->SearchNumberInString($str["channel"]),
+                        'queue' => $str["exten"],
+                        'time' => $str["duration"]
                     ));
                 }
             }
@@ -318,7 +246,7 @@ class QueueStatusRepository
                 'members' => $queue
             ));
         }
-        //error_log("ast: ".$row.PHP_EOL);
+
         return $json;
     }
 }

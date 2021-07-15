@@ -14,6 +14,8 @@ use PAMI\Message\Action\CommandAction;
 use PAMI\Message\Action\DBGetAction;
 use PAMI\Message\Action\SIPPeersAction;
 use PAMI\Message\Action\SIPShowRegistryAction;
+use PAMI\Message\Action\QueueStatusAction;
+use PAMI\Message\Action\QueueSummaryAction;
 
 class A implements IEventListener {
     public function handle(EventMessage $event) {
@@ -118,6 +120,20 @@ class PAMI_AsteriskMGMT {
     public function sip_show_registry() {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new SIPShowRegistryAction());
+        $this->pami_asterisk->close();
+        return $res;
+    }
+
+    public function queue_status() {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new QueueStatusAction());
+        $this->pami_asterisk->close();
+        return $res;
+    }
+
+    public function queue_summary() {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new QueueSummaryAction());
         $this->pami_asterisk->close();
         return $res;
     }
