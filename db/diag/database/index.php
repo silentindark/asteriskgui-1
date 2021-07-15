@@ -7,7 +7,7 @@ $total = new DiagDatabaseRepository();
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
-        $result = $total->getAll($_GET["str"]);
+        $result = $total->getAll($_GET);
         break;
 }
 

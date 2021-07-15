@@ -11,6 +11,7 @@ use PAMI\Listener\IEventListener;
 use PAMI\Message\Event\EventMessage;
 use PAMI\Message\Action\CoreShowChannelsAction;
 use PAMI\Message\Action\CommandAction;
+use PAMI\Message\Action\DBGetAction;
 use PAMI\Message\Action\SIPPeersAction;
 use PAMI\Message\Action\SIPShowRegistryAction;
 
@@ -46,6 +47,30 @@ class PAMI_AsteriskMGMT {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new CommandAction($cmd));
         $this->pami_asterisk->close();
+        return $res;
+    }
+
+    public function dbget($family = '', $key = '') {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new DBGetAction($family, $key));
+        $this->pami_asterisk->close();
+        return $res;
+    }
+
+    public function get_database() {
+        $res = [];
+        $this->pami_asterisk->open();
+        $output = $this->pami_asterisk->send(new CommandAction('database show'));
+        $this->pami_asterisk->close();
+        $raw_data = split("\n", array_pop(split("\r\n", $output->getRawContent())));
+        // do some clenup - remove last 2 elements
+        unset($raw_data[count($raw_data) - 1]);
+        unset($raw_data[count($raw_data) - 1]);
+        foreach ($raw_data as $line) {
+            $db_record = split(' : ', preg_replace("/\s+/", " ", trim($line)));
+            array_push($res, ['key' => $db_record[0], 'value' => $db_record[1]]);
+        }
+        
         return $res;
     }
 
