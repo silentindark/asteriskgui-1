@@ -5,8 +5,7 @@ include dirname(__FILE__) . "/../../db/asterisk.php";
 class DiagTotalRepository
 {
 
-    public function getAll()
-    {
+    public function getAll() {
 
         $json = array();
         $asterisk = new AsteriskMGMT();
