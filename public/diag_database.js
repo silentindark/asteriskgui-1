@@ -34,7 +34,7 @@ $(function () {
             }
         },
         fields: [
-            { name: "key", title: "Ключ", type: "text", width: 60 },
+            { name: "key", title: "Ключ", type: "text", width: 150 },
             { name: "value", title: "Значение", type: "text", width: 600 }
 
         ],
