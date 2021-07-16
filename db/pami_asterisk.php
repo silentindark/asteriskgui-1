@@ -64,12 +64,12 @@ class PAMI_AsteriskMGMT {
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('database show'));
         $this->pami_asterisk->close();
-        $raw_data = split("\n", array_pop(split("\r\n", $output->getRawContent())));
+        $raw_data = explode("\n", array_pop(explode("\r\n", $output->getRawContent())));
         // do some clenup - remove last 2 elements
         unset($raw_data[count($raw_data) - 1]);
         unset($raw_data[count($raw_data) - 1]);
         foreach ($raw_data as $line) {
-            $db_record = split(' : ', preg_replace("/\s+/", " ", trim($line)));
+            $db_record = explode(' : ', preg_replace("/\s+/", " ", trim($line)));
             array_push($res, ['key' => $db_record[0], 'value' => $db_record[1]]);
         }
         
@@ -83,7 +83,7 @@ class PAMI_AsteriskMGMT {
         $this->pami_asterisk->close();
         // Parse output like:
         // Response: Follows\r\nPrivilege: Command\r\nActionID: 1626259472.5077\r\nPeer             Call ID      Duration Recv: Pack  Lost       (     %) Jitter Send: Pack  Lost       (     %) Jitter\n10.80.0.96       593547436    00:17:19 0000051987  0000000002 ( 0.00%) 0.0000 0000051987  0000000012 ( 0.02%) 0.0104\n1 active SIP channel\n--END COMMAND--
-        $raw_data = split("\n", array_pop(split("\r\n", $output->getRawContent())));
+        $raw_data = explode("\n", array_pop(explode("\r\n", $output->getRawContent())));
         // do some cleanup - remove first and last 2 elements
         unset($raw_data[0]);
         unset($raw_data[count($raw_data)]);
@@ -91,7 +91,7 @@ class PAMI_AsteriskMGMT {
 
         foreach ($raw_data as $line) {
             $line = preg_replace("/(\(|%\))/", "", $line);
-            $chan_info = split(" ", preg_replace("\s+", " ", $line));
+            $chan_info = explode(" ", preg_replace("\s+", " ", $line));
             array_push($res, [
                 'peer' => $chan_info[0],
                 'callid' => $chan_info[1],
