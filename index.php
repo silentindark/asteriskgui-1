@@ -141,9 +141,7 @@ echo '<!DOCTYPE html>
             <li>Diagnostics 
             <ul>
                 <li><a href="index.php?p=diag.total" >Total</a></li>
-<!--
                 <li><a href="index.php?p=diag.database">Database</a></li>
--->
             </ul>
         </li>
             <li>SIP
