@@ -1,6 +1,6 @@
 <?php
 
-include dirname(__FILE__) . "/../../db/pami_asterisk.php";
+include dirname(__FILE__) . "/../../db/asterisk.php";
 
 class DiagDatabaseRepository {
 

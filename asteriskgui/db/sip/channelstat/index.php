@@ -1,6 +1,6 @@
 <?php
 include dirname(__FILE__) . "/../../../models/sip/channelstat.php";
-$config = include(dirname(__FILE__) . "/../../pami_config.php");
+$config = include(dirname(__FILE__) . "/../../config.php");
 
 $sipchannelstat = new SipChannelstatRepository();
 //error_log("ast: call command ".PHP_EOL);

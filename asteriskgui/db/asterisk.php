@@ -1,56 +1,140 @@
 <?php
+require(implode(DIRECTORY_SEPARATOR, array(
+    __DIR__,
+    '..',
+    'vendor',
+    'autoload.php'
+)));
 
-class AsteriskMGMT {
+use PAMI\Client\Impl\ClientImpl as PamiClient;
+use PAMI\Listener\IEventListener;
+use PAMI\Message\Event\EventMessage;
+use PAMI\Message\Action\CoreShowChannelsAction;
+use PAMI\Message\Action\CommandAction;
+use PAMI\Message\Action\DBGetAction;
+use PAMI\Message\Action\SIPPeersAction;
+use PAMI\Message\Action\SIPShowRegistryAction;
+use PAMI\Message\Action\QueueStatusAction;
+use PAMI\Message\Action\QueueSummaryAction;
 
-    public function Command($cmd) {
-        // $config = include("config.php");
-        $config = include("pami_config.php");
+class A implements IEventListener {
+    public function handle(EventMessage $event) {
+        // var_dump($event);
+    }
+}
 
-        $socket = fsockopen($config["PAMI"]["host"],$config["PAMI"]["port"], $errno, $errstr, 30);
+class PAMI_AsteriskMGMT {
+    protected $config;
+    protected $pami_asterisk;
+    protected $listener_id;
 
-        if (!$socket) {
-            error_log("$errstr ($errno)".PHP_EOL);
-            return $errstr;
-        } else {
-            fputs($socket, "Action: Login\r\n");
-            fputs($socket, "UserName: ".$config["PAMI"]["username"]."\r\n");
-            fputs($socket, "Secret: ".$config["PAMI"]["secret"]."\r\n\r\n");
-
-            fputs($socket, "Action: Command\r\n");
-            fputs($socket, "Command: ".$cmd."\r\n\r\n"); 
-            fputs($socket, "Action: Logoff\r\n\r\n");
-            $wrets = "";
-            while (!feof($socket)) {
-                $wrets .= fread($socket, 8192);
-            }
-            fclose($socket);
-            return $wrets;
-        }
+    function __construct() {
+        $this->config = include('config.php');
+        $this->pami_asterisk = new PamiClient($this->config['PAMI']);
+        $this->listener_id = $this->pami_asterisk->registerEventListener(new A());
     }
 
-    public function Action($cmd) {
-        // $config = include("config.php");
-        $config = include("pami_config.php");
+    function __destruct() {
+        $this->pami_asterisk->unregisterEventListener($this->listener_id);
+    }
 
-        $socket = fsockopen($config["PAMI"]["host"],$config["PAMI"]["port"], $errno, $errstr, 30);
+    public function core_show_channels() {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new CoreShowChannelsAction());
+        $this->pami_asterisk->close();
+        return $res;
+    }
 
-        if (!$socket) {
-                error_log("$errstr ($errno)".PHP_EOL);
-            return $errstr;
-        } else {
-            fputs($socket, "Action: Login\r\n");
-            fputs($socket, "UserName: ".$config["PAMI"]["username"]."\r\n");
-            fputs($socket, "Secret: ".$config["PAMI"]["secret"]."\r\n\r\n");
+    public function command($cmd) {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new CommandAction($cmd));
+        $this->pami_asterisk->close();
+        return $res;
+    }
 
-            fputs($socket, "Action: ".$cmd."\r\n\r\n");
-            fputs($socket, "ActionID: 123\r\n\r\n");
-            fputs($socket, "Action: Logoff\r\n\r\n");
-            $wrets = "";
-            while (!feof($socket)) {
-                $wrets .= fread($socket, 8192);
-            }
-            fclose($socket);
-            return $wrets;
+    public function dbget($family = '', $key = '') {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new DBGetAction($family, $key));
+        $this->pami_asterisk->close();
+        return $res;
+    }
+
+    public function get_database() {
+        $res = [];
+        $this->pami_asterisk->open();
+        $output = $this->pami_asterisk->send(new CommandAction('database show'));
+        $this->pami_asterisk->close();
+        $raw_data = explode("\n", array_pop(explode("\r\n", $output->getRawContent())));
+        // do some clenup - remove last 2 elements
+        unset($raw_data[count($raw_data) - 1]);
+        unset($raw_data[count($raw_data) - 1]);
+        foreach ($raw_data as $line) {
+            $db_record = explode(' : ', preg_replace("/\s+/", " ", trim($line)));
+            array_push($res, ['key' => $db_record[0], 'value' => $db_record[1]]);
         }
+        
+        return $res;
+    }
+
+    public function sip_show_channelstats() {
+        $res = [];
+        $this->pami_asterisk->open();
+        $output = $this->pami_asterisk->send(new CommandAction('sip show channelstats'));
+        $this->pami_asterisk->close();
+        // Parse output like:
+        // Response: Follows\r\nPrivilege: Command\r\nActionID: 1626259472.5077\r\nPeer             Call ID      Duration Recv: Pack  Lost       (     %) Jitter Send: Pack  Lost       (     %) Jitter\n10.80.0.96       593547436    00:17:19 0000051987  0000000002 ( 0.00%) 0.0000 0000051987  0000000012 ( 0.02%) 0.0104\n1 active SIP channel\n--END COMMAND--
+        $raw_data = explode("\n", array_pop(explode("\r\n", $output->getRawContent())));
+        // do some cleanup - remove first and last 2 elements
+        unset($raw_data[0]);
+        unset($raw_data[count($raw_data)]);
+        unset($raw_data[count($raw_data)]);
+
+        foreach ($raw_data as $line) {
+            $line = preg_replace("/(\(|%\))/", "", $line);
+            $chan_info = explode(" ", preg_replace("\s+", " ", $line));
+            array_push($res, [
+                'peer' => $chan_info[0],
+                'callid' => $chan_info[1],
+                'duration' => $chan_info[2],
+                'recv_pack' => $chan_info[3],
+                'recv_lost' => $chan_info[4],
+                'recv_lost_percent' => $chan_info[5],
+                'recv_jitter' => $chan_info[6],
+                'send_pack' => $chan_info[7],
+                'send_lost' => $chan_info[8],
+                'send_lost_percent' => $chan_info[9],
+                'send_jitter' => $chan_info[10]
+            ]);
+        }
+
+        return $res;
+    }
+
+    public function sip_peers() {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new SIPPeersAction());
+        $this->pami_asterisk->close();
+        return $res;
+    }
+
+    public function sip_show_registry() {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new SIPShowRegistryAction());
+        $this->pami_asterisk->close();
+        return $res;
+    }
+
+    public function queue_status() {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new QueueStatusAction());
+        $this->pami_asterisk->close();
+        return $res;
+    }
+
+    public function queue_summary() {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new QueueSummaryAction());
+        $this->pami_asterisk->close();
+        return $res;
     }
 }

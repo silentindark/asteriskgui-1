@@ -1,6 +1,6 @@
 <?php
 
-$config = include dirname(__FILE__) . "/../../db/pami_config.php";
+$config = include dirname(__FILE__) . "/../../db/config.php";
 
 class ReportCdr {
     public $calldate;
@@ -76,11 +76,12 @@ class ReportCdrRepository {
         return $result;
     }
 
-    private function generate_conditions($filter) {
+    private function generate_conditions(&$filter) {
         $result = [];
-
+        $filter['calldate_range_is_set'] = false;
         if (!is_null($filter["start"]) && $filter["start"] != '0' && !is_null($filter["end"]) && $filter["end"] != '0') {
             array_push($result, "calldate BETWEEN '".$filter["start"]." 00:00:00' AND '".$filter["end"]." 23:59:59'");
+            $filter['calldate_range_is_set'] = true;
         }
         if (!is_null($filter["search_number"]) && $filter["search_number"] != '') {
             array_push($result, "src LIKE '%".$filter["search_number"]."%' OR dst LIKE '%".$filter["search_number"]."%'");
@@ -96,13 +97,16 @@ class ReportCdrRepository {
             $condition = 'WHERE '.implode(' AND ', $conditions);
         }
 
-        if (is_null($filter["calls_limit"]) || $filter["calls_limit"] == '' || $filter["calls_limit"] == '0') {
-            $limit = '20';
-        } else {
-            $limit = $filter["calls_limit"];
+        $limit = '';
+        if (!$filter['calldate_range_is_set']) {
+            if (is_null($filter["calls_limit"]) || $filter["calls_limit"] == '' || $filter["calls_limit"] == '0') {
+                $limit = 'LIMIT 20';
+            } else {
+                $limit = "LIMIT ".$filter["calls_limit"];
+            }
         }
 
-        $sql = "SELECT calldate, src, dst, disposition, duration, billsec, recording FROM cdr ".$condition." ORDER BY calldate DESC LIMIT ".$limit;
+        $sql = "SELECT calldate, src, dst, disposition, duration, billsec, recording FROM cdr ".$condition." ORDER BY calldate DESC ".$limit;
         $result = array();
         $rows = $this->db->query($sql);
         //$q->execute();

@@ -1,7 +1,7 @@
 <?php
 include dirname(__FILE__) . "/../../../models/report/cdr.php";
 
-$config = include(dirname(__FILE__) . "/../../pami_config.php");
+$config = include(dirname(__FILE__) . "/../../config.php");
 
 $db = new mysqli($config["db"], $config["username"], $config["password"], $config["options"]);
 

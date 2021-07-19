@@ -111,18 +111,6 @@ $(function () {
                             }
                             data[i].billsec = toMMSS(data[i].billsec);
                             data[i].duration = toMMSS(data[i].duration);
-
-                            // date = data[i].calldate;
-                            // day = myDay(date); //data[i].calldate.parse(mySQLDate.replace('-','/','g')).to;
-                            // month = myMonth(date); //data[i].calldate.dateparts[0];
-                            // year = myYear(date); //data[i].calldate.dateparts[0];
-                            // if (data[i].recordingfile) {
-                            //     if (data[i].recordingfile[0] != "/") {
-                            //         data[i].recordingfile = year + "/" + month + "/" + day + "/" + data[i].recordingfile;
-                            //     }
-                            // } else {
-
-                            // }
                         }
 
                         $("#total").text("Records: " + counter +
@@ -139,7 +127,6 @@ $(function () {
             { name: "disposition", title: "Состояние", type: "text", width: 100 },
             { name: "duration", title: "Длительность звонка", type: "text", width: 100 },
             { name: "billsec", title: "Длительность разговора", type: "text", width: 100 },
-            // { name: "recording", title: "Аудиозапись разговора", type: "text", width: 100 },
             {
                 name: "recording",
                 itemTemplate: function (value) {

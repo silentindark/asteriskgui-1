@@ -15,7 +15,7 @@
 
 $page = '';
 
-require_once 'db/pami_config.php';
+require_once 'db/config.php';
 
 session_start(); //Запускаем сессии
 
@@ -25,7 +25,7 @@ class AuthClass
     private $_password;
 
     function __construct() {
-        $config = include(dirname(__FILE__) . "/db/pami_config.php");
+        $config = include(dirname(__FILE__) . "/db/config.php");
         $this->_login = $config['User']['login']; //Устанавливаем логин
         $this->_password = $config['User']['password']; //Устанавливаем пароль
     }

@@ -1,7 +1,7 @@
 <?php
 
-require_once 'db/pami_config.php';
-$config = include("db/pami_config.php");
+require_once 'db/config.php';
+$config = include("db/config.php");
 
 header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
 header('Pragma: no-cache');
