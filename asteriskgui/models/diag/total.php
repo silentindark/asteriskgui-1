@@ -42,13 +42,13 @@ class DiagTotalRepository {
         }
 
         $data = $asterisk_ami->get_sysinfo();
-        foreach ($data as $k => $v) {
-            array_push($json, ['metric' => $names_dict[$k], 'value' => $v]);
+        foreach ($data as $k) {
+            array_push($json, ['metric' => $k['key'], 'value' => $k['value']]);
         }
 
         $data = $asterisk_ami->get_uptime();
-        foreach ($data as $k => $v) {
-            array_push($json, ['metric' => $names_dict[$k], 'value' => $v]);
+        foreach ($data as $k) {
+            array_push($json, ['metric' => $k['key'], 'value' => $k['value']]);
         }
 
         return $json;

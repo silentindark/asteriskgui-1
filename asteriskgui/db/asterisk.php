@@ -123,7 +123,6 @@ class PAMI_AsteriskMGMT {
         $raw_data = explode("\n", array_pop(explode("\r\n", $output->getRawContent())));
         // do some clenup - remove last element
         unset($raw_data[count($raw_data) - 1]);
-        error_log(var_export($raw_data, true));
         foreach ($raw_data as $line) {
             $db_record = explode(': ', preg_replace("/\s+/", " ", trim($line)));
             array_push($res, ['key' => $db_record[0], 'value' => $db_record[1]]);
