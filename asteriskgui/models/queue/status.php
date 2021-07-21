@@ -46,18 +46,6 @@ class QueueStatusRepository {
 
     // ----------------------------------------------------------------------
 
-    private function SearchBusyInChannelList($channels, $number, $state) {
-        for ($i = 1; $i < count($channels); $i++) {
-            if ($channels[$i]["CallerIDNum"] == $number) {
-                $state = 'busy';
-                break;
-            }
-        }
-        return $state;
-    }
-
-    // ----------------------------------------------------------------------
-
     private function getChannels() {
         $json = array();
 
