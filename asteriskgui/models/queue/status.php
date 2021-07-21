@@ -1,9 +1,48 @@
 <?php
 
 include dirname(__FILE__) . "/../../db/asterisk.php";
-include dirname(__FILE__) . "/../../db/asterisk.php";
 
 class QueueStatusRepository {
+
+    // ----------------------------------------------------------------------
+
+    private function get_member_text_status($numeric_state) {
+/*
+        // TODO: Переписать на отображение этих статусов
+        $states = [
+            '0' => 'Неизвестно', // UNKNOWN
+            '1' => 'Свободен', // NOT_INUSE
+            '2' => 'Разговаривает', // INUSE
+            '3' => 'Занято', // BUSY
+            '4' => 'Ошибка', // INVALID
+            '5' => 'Недоступен', // UNAVAILABLE
+            '6' => 'Звонит', // RINGING
+            '7' => 'Снята трубка', // RINGINUSE
+            '8' => 'На удержании', // ONHOLD
+        ];
+*/
+        $states = [
+            '0' => 'na', // UNKNOWN
+            '1' => 'aviable', // NOT_INUSE
+            '2' => 'busy', // INUSE
+            '3' => 'busy', // BUSY
+            '4' => 'na', // INVALID
+            '5' => 'na', // UNAVAILABLE
+            '6' => 'ring', // RINGING
+            '7' => 'na', // RINGINUSE
+            '8' => 'na', // ONHOLD
+        ];
+        return $states[$numeric_state];
+    }
+
+    // ----------------------------------------------------------------------
+
+    private function get_number_from_location($location) {
+        if (strpos($location, '@') !== false) {
+            $location = explode('@', $location)[0];
+        }
+        return explode('/', $location)[1];
+    }
 
     // ----------------------------------------------------------------------
 
@@ -12,40 +51,6 @@ class QueueStatusRepository {
             if ($channels[$i]["CallerIDNum"] == $number) {
                 $state = 'busy';
                 break;
-            }
-        }
-        return $state;
-    }
-
-    // ----------------------------------------------------------------------
-
-    private function SearchNumberInString($str) {
-        //Local/104@from-queue-00000038;2
-        $step3 = substr($str, 0, strpos($str, '@'));
-        $step4 = substr($step3, strpos($step3, '/') + 1, 15);
-        return $step4;
-    }
-
-    // ----------------------------------------------------------------------
-
-    private function SearchNumberInQueuestring($str) {
-        $step1 = explode('(', trim($str));
-        $step2 = explode(' ', trim($step1[1]));
-        $step3 = substr($step2[0], 0, strpos($step2[0], '@'));
-        $step4 = substr($step3, strpos($step2[0], '/') + 1, 15);
-        return $step4;
-    }
-
-    // ----------------------------------------------------------------------
-
-    private function SearchStatusInPeersList($peers, $number) {
-        $state = 'na';
-        for ($i = 0; $i < count($peers); $i++) {
-            if ($peers[$i]["name"] == $number) {
-                if (stripos($peers[$i]["state"], "OK") !== false) {
-                    $state = 'aviable';
-                    break;
-                }
             }
         }
         return $state;
@@ -131,16 +136,9 @@ class QueueStatusRepository {
     // ----------------------------------------------------------------------
 
     public function getAll($filter) {
-        // filter vars
-        if ($filter["filter"]) {
-            $ffilter = $filter["filter"];
-        } else {
-            $ffilter = '';
-        }
-
         //send asterisk management command
-        $asterisk = new AsteriskMGMT();
-        $rows = $asterisk->Command('queue show');
+        $asterisk_ami = new PAMI_AsteriskMGMT();
+        $rows = $asterisk_ami->command('queue show')->getRawContent();
 
         $json = array();
 
@@ -150,103 +148,67 @@ class QueueStatusRepository {
             if (stripos($arr_rows[$first], "Response: Follows") !== false) break;
         }
 
-        $peers = $this->getPeers();
+        // $peers = $this->getPeers();
         $channels = $this->getChannels();
-
-        for ($i = $first; $i < count($arr_rows); $i++) {
-
-            $find = true;
-            $queue_num = '';
-            $queue = array();
-            $callers = array();
-            $W = '';
-
-            // Parse string from asterisk response
-            if (stripos($arr_rows[$i], "--END COMMAND--") !== false) break; //if find end message, then break
-            if (stripos($arr_rows[$i], "Privilege: Command") !== false) continue;
-            if (stripos($arr_rows[$i], "Response: Follows") !== false) continue;
-            if (stripos($arr_rows[$i], "Members:") !== false) continue;
-            $str = $arr_rows[$i];
-            if (empty($str)) continue; //if find space string then skip line
-
-            $q = explode(" ", trim($str));
-            $queue_num = $q[0]; //
-
-            $i++;
-            $i++;
-
-            $callersmode = false;
-
-            //Parse queue members until find empty string
-            for ($n = $i; $n < count($arr_rows); $n++, $i++) {
-                $find = true;
-                $str = $arr_rows[$n];
-                if ((stripos($str, "Privilege: Command") !== false)) continue;
-                if ((stripos($str, "No Members") !== false)) {
-                    $i++;
-                    continue;
-                }
-                if ((stripos($str, "Callers:") !== false)) {
-                    $i++;
-                    $callersmode = true;
-                    continue;
-                }
-                if ((stripos($str, "No Callers") !== false)) {
-                    $i++;
-                    break;
-                }
-                if (!$callersmode) { //search callers if true and members if false
-                    $number = '';
-                    if (empty($str)) break; //if find empty message, then break
-                    //Search
-                    if (($ffilter) && (stripos($str, $ffilter) === false)) {
-                        $find = false;
-                    }
-
-                    // Parse member string
-                    $q = explode("(", trim($str));
-                    $member = $q[0];
-
-                    $number = $this->SearchNumberInQueuestring($str);
-
-                    $state = 'na';
-                    if (stripos($str, '(Unavailable)') !== false)  $state = 'na';
-                    if (stripos($str, '(Not in use)') !== false)  $state = 'aviable';
-                    if (stripos($str, '(In use)') !== false)  $state = 'busy';
-                    if (stripos($str, '(Busy)') !== false)  $state = 'busy';
-                    if (stripos($str, '(Ringing)') !== false)  $state = 'ring';
-
-                    //   $state = $this->SearchStatusInPeersList($peers, $number);
-                    // $state = $this->SearchBusyInChannelList($channels, $number, $state);
-
-                    //made array of members
-                    if (!empty($str))
-                        if ($find) array_push($queue,  array(
-                            'member' => $member,
-                            'number' => $number,
-                            'state' => $state
-                        ));
-                }
+        $queues = $this->getQueuesStatuses();
+        foreach ($queues as $queue_name => $queue) {
+            /*
+            TODO: Переписчать под использование этой статистики, а не только мемберов и статусов
+            array (
+                'max' => '2',
+                'strategy' => 'rrmemory',
+                'calls' => '0',
+                'holdtime' => '0',
+                'talktime' => '0',
+                'completed' => '0',
+                'abandoned' => '0',
+                'servicelevel' => '0',
+                'servicelevelperf' => '0.0',
+                'weight' => '0',
+                'members' => 
+                array (
+                    0 => 
+                    array (
+                        'name' => 'SIP/999749',
+                        'location' => 'SIP/999749',
+                        'stateinterface' => 'SIP/999749',
+                        'membership' => 'static',
+                        'penalty' => '0',
+                        'callstaken' => '0',
+                        'lastcall' => '0',
+                        'status' => '4',
+                        'paused' => '0',
+                    ),
+                ),
+            )
+            */
+            $cache =[
+                'queue' => $queue_name,
+                'callers' => array(),
+                'members' => array()
+            ];
+            foreach ($queue['members'] as $member) {
+                array_push($cache['members'], [
+                    'member' => $member['name'],
+                    'number' => $this->get_number_from_location($member['location']),
+                    'state' => $this->get_member_text_status($member['status'])
+                ]);
             }
             foreach ($channels as $channel) {
-                if (($channel["application"] == "AppQueue") && ($channel["exten"] == $queue_num)) {  //
+                if (($channel["application"] == "AppQueue") && ($channel["exten"] == $queue_name)) {  //
                     array_push($callers,  array(
-                        'from' => $str["connectedlineNum"],
-                        'state' => $str["channelstatedesc"],
-                        'to' =>   $this->SearchNumberInString($str["channel"]),
-                        'queue' => $str["exten"],
-                        'time' => $str["duration"]
+                        'from' => $channel["connectedlineNum"],
+                        'state' => $channel["channelstatedesc"],
+                        'to' =>   $this->get_number_from_location($channel["bridgedchannel"]),
+                        'queue' => $channel["exten"],
+                        'time' => $channel["duration"]
                     ));
                 }
             }
-            // push final record to array
-            array_push($json,  array(
-                'queue' => $queue_num,
-                'callers' => $callers,
-                'members' => $queue
-            ));
+            array_push($json, $cache);
         }
 
+        error_log(var_export($queues, true));
         return $json;
     }
 }
