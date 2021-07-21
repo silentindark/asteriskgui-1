@@ -10,6 +10,8 @@ use PAMI\Client\Impl\ClientImpl as PamiClient;
 use PAMI\Listener\IEventListener;
 use PAMI\Message\Event\EventMessage;
 use PAMI\Message\Action\CoreShowChannelsAction;
+use PAMI\Message\Action\CoreSettingsAction;
+use PAMI\Message\Action\CoreStatusAction;
 use PAMI\Message\Action\CommandAction;
 use PAMI\Message\Action\DBGetAction;
 use PAMI\Message\Action\SIPPeersAction;
@@ -45,6 +47,20 @@ class PAMI_AsteriskMGMT {
         return $res;
     }
 
+    public function core_show_settings() {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new CoreSettingsAction());
+        $this->pami_asterisk->close();
+        return $res;
+    }
+
+    public function core_show_status() {
+        $this->pami_asterisk->open();
+        $res = $this->pami_asterisk->send(new CoreStatusAction());
+        $this->pami_asterisk->close();
+        return $res;
+    }
+
     public function command($cmd) {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new CommandAction($cmd));
@@ -73,6 +89,46 @@ class PAMI_AsteriskMGMT {
             array_push($res, ['key' => $db_record[0], 'value' => $db_record[1]]);
         }
         
+        return $res;
+    }
+
+    public function get_sysinfo() {
+        $res = [];
+        $this->pami_asterisk->open();
+        $output = $this->pami_asterisk->send(new CommandAction('core show sysinfo'));
+        $this->pami_asterisk->close();
+        $raw_data = explode("\n", array_pop(explode("\r\n", $output->getRawContent())));
+        // do some clenup - remove last 2 elements
+        $counter = count($raw_data);
+        unset($raw_data[$counter - 1]);
+        unset($raw_data[$counter - 2]);
+        unset($raw_data[0]);
+        unset($raw_data[1]);
+        unset($raw_data[2]);
+        foreach ($raw_data as $line) {
+            if ($line != '') {
+                $db_record = explode(': ', preg_replace("/\s+/", " ", trim($line)));
+                array_push($res, ['key' => $db_record[0], 'value' => $db_record[1]]);
+            }
+        }
+
+        return $res;
+    }
+
+    public function get_uptime() {
+        $res = [];
+        $this->pami_asterisk->open();
+        $output = $this->pami_asterisk->send(new CommandAction('core show uptime'));
+        $this->pami_asterisk->close();
+        $raw_data = explode("\n", array_pop(explode("\r\n", $output->getRawContent())));
+        // do some clenup - remove last element
+        unset($raw_data[count($raw_data) - 1]);
+        error_log(var_export($raw_data, true));
+        foreach ($raw_data as $line) {
+            $db_record = explode(': ', preg_replace("/\s+/", " ", trim($line)));
+            array_push($res, ['key' => $db_record[0], 'value' => $db_record[1]]);
+        }
+
         return $res;
     }
 

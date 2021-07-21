@@ -2,29 +2,54 @@
 
 include dirname(__FILE__) . "/../../db/asterisk.php";
 
-class DiagTotalRepository
-{
+class DiagTotalRepository {
 
     public function getAll() {
+        $names_dict = [
+            'amiversion' => 'AMI version',
+            'asteriskversion' => 'Asterisk version',
+            'systemname' => 'System name',
+            'coremaxcalls' => 'Core max calls',
+            'coremaxloadavg' => 'Core maxload average',
+            'corerunuser' => 'Run as user',
+            'corerungroup' => 'Run in group',
+            'coremaxfilehandles' => 'Core max file handlers',
+            'corerealtimeenabled' => 'Realtime enabled?',
+            'corecdrenabled' => 'CDR enabled?',
+            'corehttpenabled' => 'HTTP enabled?',
+            'corestartupdate' => 'Started at',
+            'corestartuptime' => 'Started time',
+            'corereloaddate' => 'Last reload at',
+            'corereloadtime' => 'Last reload time',
+            'corecurrentcalls' => 'Current calls',
+        ];
 
         $json = array();
-        $asterisk = new AsteriskMGMT();
+        $asterisk_ami = new PAMI_AsteriskMGMT();
 
-        $rows = explode(PHP_EOL, $asterisk->Command('core show version'));
-        for ($i = 10; $i <= 10; $i++) {
-            array_push($json,  array('row' => $i, 'cmd' => 'core ver', 'str' => $rows[$i]));
+        $data = $asterisk_ami->core_show_settings()->getKeys();
+        foreach ($data as $k => $v) {
+            if (array_key_exists($k, $names_dict)) {
+                array_push($json, ['metric' => $names_dict[$k], 'value' => $v]);
+            }
         }
 
-        $rows = explode(PHP_EOL, $asterisk->Command('core show uptime'));
-        for ($i = 10; $i <= 11; $i++) {
-            array_push($json,  array('row' => $i, 'cmd' => 'core uptime', 'str' => $rows[$i]));
+        $data = $asterisk_ami->core_show_status()->getKeys();
+        foreach ($data as $k => $v) {
+            if (array_key_exists($k, $names_dict)) {
+                array_push($json, ['metric' => $names_dict[$k], 'value' => $v]);
+            }
         }
 
-        $rows = explode(PHP_EOL, $asterisk->Command('core show sysinfo'));
-        for ($i = 13; $i <= 17; $i++) {
-            array_push($json,  array('row' => $i, 'cmd' => 'core sysinfo', 'str' => $rows[$i]));
+        $data = $asterisk_ami->get_sysinfo();
+        foreach ($data as $k => $v) {
+            array_push($json, ['metric' => $names_dict[$k], 'value' => $v]);
         }
 
+        $data = $asterisk_ami->get_uptime();
+        foreach ($data as $k => $v) {
+            array_push($json, ['metric' => $names_dict[$k], 'value' => $v]);
+        }
 
         return $json;
     }

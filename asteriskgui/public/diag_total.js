@@ -34,8 +34,8 @@ $(function() {
                 }
             },
             fields: [
-                { name: "cmd", title: "Command", type: "text", width: 60  },
-                { name: "str", title: "Result", type: "text", width: 600  }
+                { name: "metric", title: "Парамер", type: "text", width: 180  },
+                { name: "value", title: "Значение", type: "text", width: 600  }
 
             ],
 	    onDataLoaded: function(data) {
