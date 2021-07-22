@@ -5,7 +5,7 @@
  Screenshot from real system with Elastix in folder "screenshot".
  Using AMI for request info about channels and mysql for CDR stat. 
 
- Default login/password - demo/demo
+ Default login/password - admin/admin
 
 # Features
  - CDR stat 
@@ -18,13 +18,13 @@
 
 # Version
 
-Current version 0.5 
+Current version 0.6
  
 # Up and Running
 
-1. `git clone https://github.com/zheltovanton/asteriskgui.git`
-2. `cd asteriskgui`
-3. `vim db/config.php`
-4. Visit `http://localhost/asteriskgui`
+1. Склонировать git в /usr/local/voip/src/
+2. /usr/local/voip/src/asteriskgui/asteriskgui скопировать в /var/www/ переименовав в клиенсткую
+3. Отредактировать клиентский db/config.php под его ВАТС, User/Password указать те, под которыми он будет логиниться
+4. Задать всем файлам и папкам www-data:www-data
 
 
