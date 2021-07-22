@@ -46,7 +46,7 @@ $(function () {
             // { name: "extension", title: "Extension", type: "text", width: 100 },
             { name: "duration", title: "Длительность", type: "text", width: 100 },
             { name: "channelstatedesc", title: "Состояние канала", type: "text", width: 50 },
-            { name: "bridgedchannel", title: "Соединен с", type: "text", width: 100 },
+            { name: "connectedlinenum", title: "Соединен с", type: "text", width: 100 },
             { name: "application", title: "Приложение", type: "text", width: 60 },
             { name: "applicationdata", title: "Данные из приложения", type: "text", width: 70 }
         ],

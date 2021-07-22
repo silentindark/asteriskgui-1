@@ -146,7 +146,7 @@ class PAMI_AsteriskMGMT {
 
         foreach ($raw_data as $line) {
             $line = preg_replace("/(\(|%\))/", "", $line);
-            $chan_info = explode(" ", preg_replace("\s+", " ", $line));
+            $chan_info = explode(" ", preg_replace("/\s+/", " ", $line));
             array_push($res, [
                 'peer' => $chan_info[0],
                 'callid' => $chan_info[1],
