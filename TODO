@@ -2,6 +2,14 @@
  - Переделать все пути на использование dirname(__FILE__)
  - Переделать все фильтры на поиск по подстроке
  - Унифицировать обработку результата из PAMI (именования переменных как models/queue/status.php, чтобы можно было копипастить блок целиком)
+ - PHP Notice:  Only variables should be passed by reference in db/asterisk.php on line 141
+ - PHP Notice:  Only variables should be passed by reference in db/asterisk.php on line 123
+ - PHP Notice:  Only variables should be passed by reference in db/asterisk.php on line 100
+ - PHP Notice:  Only variables should be passed by reference in db/asterisk.php on line 83
+ - AH01382: Request header read timeout
+ - AH02811: script not found or unable to stat: /usr/lib/cgi-bin/upgrade.cgi
+ - AH02811: script not found or unable to stat: /usr/lib/cgi-bin/upload_conf.cgi
+
 
 SIP:
  - Как то использовать для получения инфы о пире из списка (models/sip/sip_peer.php)
