@@ -10,7 +10,7 @@ class DiagDatabaseRepository {
         $json = array();
 
         $asterisk_ami = new PAMI_AsteriskMGMT();
-        $database = $asterisk_ami->get_database();
+        $database = $asterisk_ami->сmd_get_database();
         foreach ($database as $record) {
             if ($use_filter) {
                 $add = false;

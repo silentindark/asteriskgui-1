@@ -10,7 +10,7 @@ class SipChannelstatRepository {
 
         //send asterisk management command
         $asterisk_ami = new PAMI_AsteriskMGMT();
-        $sip_channelstats = $asterisk_ami->sip_show_channelstats();
+        $sip_channelstats = $asterisk_ami->сmd_sip_show_channelstats();
         foreach ($sip_channelstats as $chanelstat) {
             array_push($json, $chanelstat);
         }

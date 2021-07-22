@@ -75,7 +75,7 @@ class PAMI_AsteriskMGMT {
         return $res;
     }
 
-    public function get_database() {
+    public function сmd_get_database() {
         $res = [];
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('database show'));
@@ -92,7 +92,7 @@ class PAMI_AsteriskMGMT {
         return $res;
     }
 
-    public function get_sysinfo() {
+    public function сmd_get_sysinfo() {
         $res = [];
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('core show sysinfo'));
@@ -115,7 +115,7 @@ class PAMI_AsteriskMGMT {
         return $res;
     }
 
-    public function get_uptime() {
+    public function сmd_get_uptime() {
         $res = [];
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('core show uptime'));
@@ -131,7 +131,7 @@ class PAMI_AsteriskMGMT {
         return $res;
     }
 
-    public function sip_show_channelstats() {
+    public function сmd_sip_show_channelstats() {
         $res = [];
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('sip show channelstats'));

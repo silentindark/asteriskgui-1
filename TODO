@@ -1,10 +1,12 @@
-// [Wed Jul 07 16:15:37.667754 2021] [:error] [pid 6158] [client 10.80.32.56:65142]
-// PHP Notice:  Undefined offset: 510 in /var/www/IS_TEST_GUI/models/queue/status.php on line 152, 
-// referer: http://c2virtpbx01.is74.ru/IS_TEST_GUI/view/queue.php
+Общее по проекту:
+ - Переделать все пути на использование dirname(__FILE__)
+ - Переделать все фильтры на поиск по подстроке
+ - Унифицировать обработку результата из PAMI (именования переменных как models/queue/status.php, чтобы можно было копипастить блок целиком)
 
-// [Wed Jul 07 16:15:37.668579 2021] [:error] [pid 6158] [client 10.80.32.56:65142] 
-// PHP Notice:  Undefined offset: 24 in /var/www/IS_TEST_GUI/models/queue/status.php on line 100, 
-// referer: http://c2virtpbx01.is74.ru/IS_TEST_GUI/view/queue.php
+SIP:
+ - Как то использовать для получения инфы о пире из списка (models/sip/sip_peer.php)
 
-Переделать все пути на использование dirname(__FILE__)
-Переделать все фильтры на поиск по подстроке
+Очереди:
+ - Использовать текстовое отображение статусов агентов в очередях (models/queue/status.php)
+ - Переписать под использование статистики очереди/мемберов из выхлопа
+ - Отрефакторить public/queue.js

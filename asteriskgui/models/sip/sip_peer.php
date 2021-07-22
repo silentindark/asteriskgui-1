@@ -2,6 +2,8 @@
 
 include dirname(__FILE__) . "/../../db/asterisk.php";
 
+# TODO как то использовать для получения инфы о пире из списка
+
 class SipPeerRepository
 {
 

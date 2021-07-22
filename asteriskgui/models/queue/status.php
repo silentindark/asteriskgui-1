@@ -141,7 +141,7 @@ class QueueStatusRepository {
         $queues = $this->getQueuesStatuses();
         foreach ($queues as $queue_name => $queue) {
             /*
-            TODO: Переписчать под использование этой статистики, а не только мемберов и статусов
+            // TODO: Переписчать под использование этой статистики, а не только мемберов и статусов
             array (
                 'max' => '2',
                 'strategy' => 'rrmemory',
