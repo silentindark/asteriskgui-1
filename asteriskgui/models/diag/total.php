@@ -17,10 +17,10 @@ class DiagTotalRepository {
             'corerealtimeenabled' => 'Realtime enabled?',
             'corecdrenabled' => 'CDR enabled?',
             'corehttpenabled' => 'HTTP enabled?',
-            'corestartupdate' => 'Started at',
-            'corestartuptime' => 'Started time',
-            'corereloaddate' => 'Last reload at',
-            'corereloadtime' => 'Last reload time',
+            'corestartupdate' => 'Asterisk started at',
+            'corestartuptime' => 'Asterisk started time',
+            'corereloaddate' => 'Asterisk last reload at',
+            'corereloadtime' => 'Asterisk last reload time',
             'corecurrentcalls' => 'Current calls',
         ];
 
