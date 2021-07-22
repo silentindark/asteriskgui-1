@@ -3,7 +3,7 @@ include dirname(__FILE__) . "/../../../models/report/cdr.php";
 
 $config = include(dirname(__FILE__) . "/../../config.php");
 
-$db = new mysqli($config["db"], $config["username"], $config["password"], $config["options"]);
+$db = new mysqli($config['MYSQL']['server'], $config['MYSQL']['username'], $config['MYSQL']['password'], $config['MYSQL']['db']);
 
 $report = new ReportCdrRepository($db);
 
