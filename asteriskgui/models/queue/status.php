@@ -195,7 +195,6 @@ class QueueStatusRepository {
             }
             array_push($json, $cache);
         }
-	error_log(var_export($json, true));
         return $json;
     }
 }
