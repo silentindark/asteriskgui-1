@@ -84,7 +84,10 @@ class ReportCdrRepository {
             $filter['calldate_range_is_set'] = true;
         }
         if (!is_null($filter["search_number"]) && $filter["search_number"] != '') {
-            array_push($result, "src LIKE '%".$filter["search_number"]."%' OR dst LIKE '%".$filter["search_number"]."%'");
+            array_push($result, "(src LIKE '%".$filter["search_number"]."%' OR dst LIKE '%".$filter["search_number"]."%')");
+        }
+	if (!is_null($filter["search_state"]) && $filter["search_state"] != '') {
+            array_push($result, "disposition = '".$filter["search_state"]."'");
         }
 
         return $result;
