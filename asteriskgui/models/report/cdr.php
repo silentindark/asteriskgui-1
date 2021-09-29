@@ -84,13 +84,16 @@ class ReportCdrRepository {
             $filter['calldate_range_is_set'] = true;
         }
         if (!is_null($filter["search_number"]) && $filter["search_number"] != '') {
-            array_push($result, "src LIKE '%".$filter["search_number"]."%' OR dst LIKE '%".$filter["search_number"]."%'");
+            array_push($result, "(src LIKE '%".$filter["search_number"]."%' OR dst LIKE '%".$filter["search_number"]."%')");
         }
-
+	if (!is_null($filter["search_state"]) && $filter["search_state"] != '') {
+            array_push($result, "disposition = '".$filter["search_state"]."'");
+        }
         return $result;
     }
 
     public function getAll($filter) {
+	error_log(var_export($filter,true));
         $conditions = $this->generate_conditions($filter);
         $condition = '';
         if ($conditions) {
@@ -107,6 +110,7 @@ class ReportCdrRepository {
         }
 
         $sql = "SELECT calldate, src, dst, disposition, duration, billsec, recording FROM cdr ".$condition." ORDER BY calldate DESC ".$limit;
+        error_log($sql);
         $result = array();
         $rows = $this->db->query($sql);
         //$q->execute();

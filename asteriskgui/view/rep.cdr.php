@@ -13,6 +13,7 @@ echo '<script src="../public/report_cdr.js"></script>
         <label class="checkbox-inline">За период<input type="text" class="form-control" id="daterange" value=""></label>
         <label class="checkbox-inline">последние<input type="text" class="form-control" id="calls_limit" value="20" >звонков</label>
         <label class="checkbox-inline">искать номер<input type="text" class="form-control" id="search_number" value="" ></label>
+        <label class="checkbox-inline">состояние<input type="text" class="form-control" id="search_state" value="" ></label>
     </form>
     </div>
 
