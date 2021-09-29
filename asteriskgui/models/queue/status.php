@@ -199,4 +199,3 @@ class QueueStatusRepository {
         return $json;
     }
 }
-
