@@ -89,6 +89,7 @@ class ReportCdrRepository {
 	if (!is_null($filter["search_state"]) && $filter["search_state"] != '') {
             array_push($result, "disposition = '".$filter["search_state"]."'");
         }
+
         return $result;
     }
 
