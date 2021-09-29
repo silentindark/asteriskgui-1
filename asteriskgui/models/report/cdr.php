@@ -93,7 +93,6 @@ class ReportCdrRepository {
     }
 
     public function getAll($filter) {
-	error_log(var_export($filter,true));
         $conditions = $this->generate_conditions($filter);
         $condition = '';
         if ($conditions) {
@@ -110,7 +109,6 @@ class ReportCdrRepository {
         }
 
         $sql = "SELECT calldate, src, dst, disposition, duration, billsec, recording FROM cdr ".$condition." ORDER BY calldate DESC ".$limit;
-        error_log($sql);
         $result = array();
         $rows = $this->db->query($sql);
         //$q->execute();
