@@ -1,15 +1,25 @@
 <?php
 
-include __DIR__ . "/../../db/asterisk.php";
+namespace app\models\diag;
 
-class DiagDatabaseRepository {
+use app\models\PAMI_AsteriskMGMT;
 
-    public function getAll($filter) {
+class DiagDatabaseRepository
+{
+    private $config;
+
+    function __construct(?array $config = null)
+    {
+        $this->config = $config;
+    }
+
+    public function getAll($filter)
+    {
         $prepared_filters = array_filter($filter);
         $use_filter = !empty($prepared_filters);
         $json = array();
 
-        $asterisk_ami = new PAMI_AsteriskMGMT();
+        $asterisk_ami = new PAMI_AsteriskMGMT($this->config);
         $database = $asterisk_ami->сmd_get_database();
         foreach ($database as $record) {
             if ($use_filter) {

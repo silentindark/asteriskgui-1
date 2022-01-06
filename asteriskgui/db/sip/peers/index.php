@@ -1,12 +1,15 @@
 <?php
-include __DIR__ . "/../../../models/sip/peers.php";
+
+use app\models\sip\SipPeerRepository;
+
+require_once __DIR__ . '/../../../vendor/autoload.php';
 $config = include(__DIR__ . "/../../config.php");
 
 //$db = new PDO($config["db"], $config["username"], $config["password"], $config["options"]);
 
 //error_reporting(E_ALL); 
 
-$sippeer = new SipPeerRepository();
+$sippeer = new SipPeerRepository($config);
 //error_log("ast: call command ".PHP_EOL);
 
 switch ($_SERVER["REQUEST_METHOD"]) {
@@ -16,4 +19,4 @@ switch ($_SERVER["REQUEST_METHOD"]) {
 }
 
 header("Content-Type: application/json");
-echo  json_encode($result);
+echo json_encode($result);

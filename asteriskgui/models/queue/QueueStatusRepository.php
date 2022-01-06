@@ -1,26 +1,35 @@
 <?php
 
-include __DIR__ . "/../../db/asterisk.php";
+namespace app\models\queue;
 
-class QueueStatusRepository {
+use app\models\PAMI_AsteriskMGMT;
+
+class QueueStatusRepository
+{
+    private $config;
+
+    function __construct(?array $config = null)
+    {
+        $this->config = $config;
+    }
 
     // ----------------------------------------------------------------------
-
-    private function get_member_text_status($numeric_state) {
-/*
-        // TODO: Переписать на отображение этих статусов
-        $states = [
-            '0' => 'Неизвестно', // UNKNOWN
-            '1' => 'Свободен', // NOT_INUSE
-            '2' => 'Разговаривает', // INUSE
-            '3' => 'Занято', // BUSY
-            '4' => 'Ошибка', // INVALID
-            '5' => 'Недоступен', // UNAVAILABLE
-            '6' => 'Звонит', // RINGING
-            '7' => 'Снята трубка', // RINGINUSE
-            '8' => 'На удержании', // ONHOLD
-        ];
-*/
+    private function get_member_text_status($numeric_state)
+    {
+        /*
+                // TODO: Переписать на отображение этих статусов
+                $states = [
+                    '0' => 'Неизвестно', // UNKNOWN
+                    '1' => 'Свободен', // NOT_INUSE
+                    '2' => 'Разговаривает', // INUSE
+                    '3' => 'Занято', // BUSY
+                    '4' => 'Ошибка', // INVALID
+                    '5' => 'Недоступен', // UNAVAILABLE
+                    '6' => 'Звонит', // RINGING
+                    '7' => 'Снята трубка', // RINGINUSE
+                    '8' => 'На удержании', // ONHOLD
+                ];
+        */
         $states = [
             '0' => 'na', // UNKNOWN
             '1' => 'aviable', // NOT_INUSE
@@ -37,7 +46,8 @@ class QueueStatusRepository {
 
     // ----------------------------------------------------------------------
 
-    private function get_number_from_location($location) {
+    private function get_number_from_location($location)
+    {
         if (strpos($location, '@') !== false) {
             $location = explode('@', $location)[0];
         }
@@ -46,10 +56,11 @@ class QueueStatusRepository {
 
     // ----------------------------------------------------------------------
 
-    private function getChannels() {
+    private function getChannels()
+    {
         $json = array();
 
-        $asterisk_ami = new PAMI_AsteriskMGMT();
+        $asterisk_ami = new PAMI_AsteriskMGMT($this->config);
         $data = $asterisk_ami->core_show_channels();
 
         foreach ($data->getEvents() as $record) {
@@ -64,19 +75,20 @@ class QueueStatusRepository {
         return $json;
     }
 
-    private function getPeers() {
+    private function getPeers()
+    {
         $json = array();
 
-        $asterisk_ami = new PAMI_AsteriskMGMT();
+        $asterisk_ami = new PAMI_AsteriskMGMT($this->config);
         $data = $asterisk_ami->sip_peers();
 
         foreach ($data->getEvents() as $record) {
             $event = $record->getKeys();
             if ($event['event'] == 'PeerEntry') {
-                array_push($json,  array(
+                array_push($json, array(
                     'objectname' => $event['objectname'],
-                    'ipaddress' =>  $event['ipaddress'],
-                    'status' =>  $event['status'],
+                    'ipaddress'  => $event['ipaddress'],
+                    'status'     => $event['status'],
                 ));
             }
         }
@@ -84,12 +96,13 @@ class QueueStatusRepository {
         return $json;
     }
 
-    private function getQueuesStatuses() {
+    private function getQueuesStatuses()
+    {
         $json = array();
         $queues = array();
         $members = array();
 
-        $asterisk_ami = new PAMI_AsteriskMGMT();
+        $asterisk_ami = new PAMI_AsteriskMGMT($this->config);
         $data = $asterisk_ami->queue_status();
 
         foreach ($data->getEvents() as $record) {
@@ -123,9 +136,10 @@ class QueueStatusRepository {
 
     // ----------------------------------------------------------------------
 
-    public function getAll($filter) {
+    public function getAll($filter)
+    {
         //send asterisk management command
-        $asterisk_ami = new PAMI_AsteriskMGMT();
+        $asterisk_ami = new PAMI_AsteriskMGMT($this->config);
         $rows = $asterisk_ami->command('queue show')->getRawContent();
 
         $json = array();
@@ -170,8 +184,8 @@ class QueueStatusRepository {
                 ),
             )
             */
-            $cache =[
-                'queue' => $queue_name,
+            $cache = [
+                'queue'   => $queue_name,
                 'callers' => array(),
                 'members' => array()
             ];
@@ -179,17 +193,17 @@ class QueueStatusRepository {
                 array_push($cache['members'], [
                     'member' => $member['name'],
                     'number' => $this->get_number_from_location($member['location']),
-                    'state' => $this->get_member_text_status($member['status'])
+                    'state'  => $this->get_member_text_status($member['status'])
                 ]);
             }
             foreach ($channels as $channel) {
                 if (($channel["application"] == "AppQueue") && ($channel["exten"] == $queue_name)) {  //
-                    array_push($callers,  array(
-                        'from' => $channel["connectedlineNum"],
+                    array_push($callers, array(
+                        'from'  => $channel["connectedlineNum"],
                         'state' => $channel["channelstatedesc"],
-                        'to' =>   $this->get_number_from_location($channel["bridgedchannel"]),
+                        'to'    => $this->get_number_from_location($channel["bridgedchannel"]),
                         'queue' => $channel["exten"],
-                        'time' => $channel["duration"]
+                        'time'  => $channel["duration"]
                     ));
                 }
             }

@@ -1,17 +1,11 @@
 <?php
 
-class ReportGroupExtCdr
-{
-    public $calldate;
-    public $src;
-    public $count;
-    public $medium;
-    public $sum_disposition;
-}
+namespace app\models\report;
 
-class ReportGroupExtCdrRepository
-{
+use PDO;
 
+class ReportNoAnswerRepository
+{
     protected $db;
 
     public function __construct(PDO $db)
@@ -21,20 +15,27 @@ class ReportGroupExtCdrRepository
 
     private function read($row)
     {
-        $result = new ReportGroupExtCdr();
+        $result = new ReportNoAnswer();
 
         $result->calldate = $row["calldate"];
-        $result->count = $row["count"];
+        $result->clid = $row["clid"];
         $result->src = $row["src"];
-        $result->medium = $row["medium"];
-        $result->sum_duration = $row["sum_duration"];
+        $result->dst = $row["dst"];
+        $result->dcontext = $row["dcontext"];
+        $result->duration = $row["duration"];
+        $result->billsec = $row["billsec"];
+        $result->recordingfile = $row["recordingfile"];
+        $result->disposition = $row["disposition"];
 
         return $result;
     }
 
     public function getAll($filter)
     {
+        $clid = $filter["clid"];
         $src = $filter["src"];
+        $dst = $filter["dst"];
+        $dcontext = $filter["dcontext"];
         //$mon = $this->monitor;
         $calldate = implode(",", $filter["calldate"]);
         $calldate = substr($calldate, 0, strpos($calldate, '('));
@@ -43,18 +44,23 @@ class ReportGroupExtCdrRepository
             $calldate = date("Y-m-d");
         }
         $sql = "SELECT 
-            src,	
-            count(*) as count, 
-            sum(duration) as sum_duration, 
-            sum(duration) / count(*)  as medium, 
-            calldate
+        calldate,
+        clid,
+        src,
+        dst,
+        dcontext,
+        duration,
+        billsec, 
+        recordingfile,
+        disposition
         FROM cdr where (calldate BETWEEN '$calldate 00:00:00' AND '$calldate 23:59:59')
-             and  (src like '%$src%')
-             and (CAST(src AS UNSIGNED)<100000)
-        group by src 
-        order by src";
+        and  (clid like '%$clid%')
+        and  (src like '%$src%')
+        and  (dst like '%$dst%')
+        and  (dcontext like '%$dcontext%')
+        and ( ( dcontext = 'ext-queues') and (dstchannel = '')) 
+        order by calldate desc";
         $q = $this->db->prepare($sql);
-        error_log($sql . PHP_EOL);
         $q->execute();
         $rows = $q->fetchAll();
 

@@ -1,14 +1,25 @@
 <?php
 
-include __DIR__ . "/../../db/asterisk.php";
+namespace app\models\sip;
 
-class SipPeerRepository {
-    public function getAll($filter) {
+use app\models\PAMI_AsteriskMGMT;
+
+class SipPeerRepository
+{
+    private $config;
+
+    function __construct(?array $config = null)
+    {
+        $this->config = $config;
+    }
+
+    public function getAll($filter)
+    {
         $prepared_filters = array_filter($filter);
         $use_filter = !empty($prepared_filters);
         $json = array();
 
-        $asterisk_ami = new PAMI_AsteriskMGMT();
+        $asterisk_ami = new PAMI_AsteriskMGMT($this->config);
         $sip_peers = $asterisk_ami->sip_peers();
         foreach ($sip_peers->getEvents() as $variable) {
             $event = $variable->getKeys();
@@ -21,20 +32,20 @@ class SipPeerRepository {
                         }
                     }
                     if ($add) {
-                        array_push($json,  array(
-                            'objectname' => $event['objectname'],
-                            'ipaddress' =>  $event['ipaddress'],
-                            'ipport' =>  $event['ipport'],
-                            'status' =>  $event['status'],
+                        array_push($json, array(
+                            'objectname'  => $event['objectname'],
+                            'ipaddress'   => $event['ipaddress'],
+                            'ipport'      => $event['ipport'],
+                            'status'      => $event['status'],
                             'description' => $event['description']
                         ));
                     }
                 } else {
-                    array_push($json,  array(
-                        'objectname' => $event['objectname'],
-                        'ipaddress' =>  $event['ipaddress'],
-                        'ipport' =>  $event['ipport'],
-                        'status' =>  $event['status'],
+                    array_push($json, array(
+                        'objectname'  => $event['objectname'],
+                        'ipaddress'   => $event['ipaddress'],
+                        'ipport'      => $event['ipport'],
+                        'status'      => $event['status'],
                         'description' => $event['description']
                     ));
                 }

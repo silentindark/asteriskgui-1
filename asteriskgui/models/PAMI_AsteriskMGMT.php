@@ -1,14 +1,9 @@
 <?php
-require(implode(DIRECTORY_SEPARATOR, array(
-    __DIR__,
-    '..',
-    'vendor',
-    'autoload.php'
-)));
 
+namespace app\models;
+
+use app\models\eventListeners\A;
 use PAMI\Client\Impl\ClientImpl as PamiClient;
-use PAMI\Listener\IEventListener;
-use PAMI\Message\Event\EventMessage;
 use PAMI\Message\Action\CoreShowChannelsAction;
 use PAMI\Message\Action\CoreSettingsAction;
 use PAMI\Message\Action\CoreStatusAction;
@@ -19,63 +14,69 @@ use PAMI\Message\Action\SIPShowRegistryAction;
 use PAMI\Message\Action\QueueStatusAction;
 use PAMI\Message\Action\QueueSummaryAction;
 
-class A implements IEventListener {
-    public function handle(EventMessage $event) {
-        // var_dump($event);
-    }
-}
-
-class PAMI_AsteriskMGMT {
+class PAMI_AsteriskMGMT
+{
+    /** @var array */
     protected $config;
+    /** @var PamiClient */
     protected $pami_asterisk;
+    /** @var string */
     protected $listener_id;
 
-    function __construct() {
-        $this->config = include('config.php');
+    function __construct(?array $config = null)
+    {
+        $this->config = $config;
         $this->pami_asterisk = new PamiClient($this->config['PAMI']);
         $this->listener_id = $this->pami_asterisk->registerEventListener(new A());
     }
 
-    function __destruct() {
+    function __destruct()
+    {
         $this->pami_asterisk->unregisterEventListener($this->listener_id);
     }
 
-    public function core_show_channels() {
+    public function core_show_channels()
+    {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new CoreShowChannelsAction());
         $this->pami_asterisk->close();
         return $res;
     }
 
-    public function core_show_settings() {
+    public function core_show_settings()
+    {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new CoreSettingsAction());
         $this->pami_asterisk->close();
         return $res;
     }
 
-    public function core_show_status() {
+    public function core_show_status()
+    {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new CoreStatusAction());
         $this->pami_asterisk->close();
         return $res;
     }
 
-    public function command($cmd) {
+    public function command($cmd)
+    {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new CommandAction($cmd));
         $this->pami_asterisk->close();
         return $res;
     }
 
-    public function dbget($family = '', $key = '') {
+    public function dbget($family = '', $key = '')
+    {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new DBGetAction($family, $key));
         $this->pami_asterisk->close();
         return $res;
     }
 
-    public function сmd_get_database() {
+    public function сmd_get_database()
+    {
         $res = [];
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('database show'));
@@ -88,11 +89,12 @@ class PAMI_AsteriskMGMT {
             $db_record = explode(' : ', preg_replace("/\s+/", " ", trim($line)));
             array_push($res, ['key' => $db_record[0], 'value' => $db_record[1]]);
         }
-        
+
         return $res;
     }
 
-    public function сmd_get_sysinfo() {
+    public function сmd_get_sysinfo()
+    {
         $res = [];
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('core show sysinfo'));
@@ -115,7 +117,8 @@ class PAMI_AsteriskMGMT {
         return $res;
     }
 
-    public function сmd_get_uptime() {
+    public function сmd_get_uptime()
+    {
         $res = [];
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('core show uptime'));
@@ -131,7 +134,8 @@ class PAMI_AsteriskMGMT {
         return $res;
     }
 
-    public function сmd_sip_show_channelstats() {
+    public function сmd_sip_show_channelstats()
+    {
         $res = [];
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('sip show channelstats'));
@@ -148,45 +152,49 @@ class PAMI_AsteriskMGMT {
             $line = preg_replace("/(\(|%\))/", "", $line);
             $chan_info = explode(" ", preg_replace("/\s+/", " ", $line));
             array_push($res, [
-                'peer' => $chan_info[0],
-                'callid' => $chan_info[1],
-                'duration' => $chan_info[2],
-                'recv_pack' => $chan_info[3],
-                'recv_lost' => $chan_info[4],
+                'peer'              => $chan_info[0],
+                'callid'            => $chan_info[1],
+                'duration'          => $chan_info[2],
+                'recv_pack'         => $chan_info[3],
+                'recv_lost'         => $chan_info[4],
                 'recv_lost_percent' => $chan_info[5],
-                'recv_jitter' => $chan_info[6],
-                'send_pack' => $chan_info[7],
-                'send_lost' => $chan_info[8],
+                'recv_jitter'       => $chan_info[6],
+                'send_pack'         => $chan_info[7],
+                'send_lost'         => $chan_info[8],
                 'send_lost_percent' => $chan_info[9],
-                'send_jitter' => $chan_info[10]
+                'send_jitter'       => $chan_info[10]
             ]);
         }
 
         return $res;
     }
 
-    public function sip_peers() {
+    public function sip_peers()
+    {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new SIPPeersAction());
         $this->pami_asterisk->close();
         return $res;
     }
 
-    public function sip_show_registry() {
+    public function sip_show_registry()
+    {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new SIPShowRegistryAction());
         $this->pami_asterisk->close();
         return $res;
     }
 
-    public function queue_status() {
+    public function queue_status()
+    {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new QueueStatusAction());
         $this->pami_asterisk->close();
         return $res;
     }
 
-    public function queue_summary() {
+    public function queue_summary()
+    {
         $this->pami_asterisk->open();
         $res = $this->pami_asterisk->send(new QueueSummaryAction());
         $this->pami_asterisk->close();

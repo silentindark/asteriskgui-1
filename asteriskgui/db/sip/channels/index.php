@@ -1,13 +1,16 @@
 <?php
-include __DIR__ . "/../../../models/sip/channels.php";
+
+use app\models\sip\SipChannelsRepository;
+
+require_once __DIR__ . '/../../../vendor/autoload.php';
 $config = include(__DIR__ . "/../../config.php");
 
-$sipchannels = new SipChannelsRepository();
+$sipChannels = new SipChannelsRepository($config);
 //error_log("ast: call command ".PHP_EOL);
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
-        $result = $sipchannels->getAll($_GET);
+        $result = $sipChannels->getAll($_GET);
         break;
 }
 

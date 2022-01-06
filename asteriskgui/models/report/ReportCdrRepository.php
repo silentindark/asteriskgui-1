@@ -1,33 +1,18 @@
 <?php
 
-$config = include __DIR__ . "/../../db/config.php";
+namespace app\models\report;
 
-class ReportCdr {
-    public $calldate;
-    public $clid;
-    public $clidrb;
-    public $src;
-    public $cc;
-    public $dst;
-    public $ext;
-    public $whois;
-    public $dcontext;
-    public $duration;
-    public $billsec;
-    public $disposition;
-    public $dstchannel;
-    public $lastapp;
-    public $lastdata;
-}
-
-class ReportCdrRepository {
+class ReportCdrRepository
+{
     protected $db;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->db = $db;
     }
 
-    private function read($row) {
+    private function read($row)
+    {
         $result = new ReportCdr();
 
         $result->calldate = $row["calldate"];
@@ -62,7 +47,8 @@ class ReportCdrRepository {
         return $result;
     }
 
-    private function read_cdr($row) {
+    private function read_cdr($row)
+    {
         $result = new ReportCdr();
 
         $result->calldate = $row["calldate"];
@@ -76,29 +62,31 @@ class ReportCdrRepository {
         return $result;
     }
 
-    private function generate_conditions(&$filter) {
+    private function generate_conditions(&$filter)
+    {
         $result = [];
         $filter['calldate_range_is_set'] = false;
         if (!is_null($filter["start"]) && $filter["start"] != '0' && !is_null($filter["end"]) && $filter["end"] != '0') {
-            array_push($result, "calldate BETWEEN '".$filter["start"]." 00:00:00' AND '".$filter["end"]." 23:59:59'");
+            array_push($result, "calldate BETWEEN '" . $filter["start"] . " 00:00:00' AND '" . $filter["end"] . " 23:59:59'");
             $filter['calldate_range_is_set'] = true;
         }
         if (!is_null($filter["search_number"]) && $filter["search_number"] != '') {
-            array_push($result, "(src LIKE '%".$filter["search_number"]."%' OR dst LIKE '%".$filter["search_number"]."%')");
+            array_push($result, "(src LIKE '%" . $filter["search_number"] . "%' OR dst LIKE '%" . $filter["search_number"] . "%')");
         }
 
-	if (!is_null($filter["search_state"]) && $filter["search_state"] != '') {
-            array_push($result, "disposition = '".$filter["search_state"]."'");
+        if (!is_null($filter["search_state"]) && $filter["search_state"] != '') {
+            array_push($result, "disposition = '" . $filter["search_state"] . "'");
         }
 
         return $result;
     }
 
-    public function getAll($filter) {
+    public function getAll($filter)
+    {
         $conditions = $this->generate_conditions($filter);
         $condition = '';
         if ($conditions) {
-            $condition = 'WHERE '.implode(' AND ', $conditions);
+            $condition = 'WHERE ' . implode(' AND ', $conditions);
         }
 
         $limit = '';
@@ -106,11 +94,11 @@ class ReportCdrRepository {
             if (is_null($filter["calls_limit"]) || $filter["calls_limit"] == '' || $filter["calls_limit"] == '0') {
                 $limit = 'LIMIT 20';
             } else {
-                $limit = "LIMIT ".$filter["calls_limit"];
+                $limit = "LIMIT " . $filter["calls_limit"];
             }
         }
 
-        $sql = "SELECT calldate, src, dst, disposition, duration, billsec, recording FROM cdr ".$condition." ORDER BY calldate DESC ".$limit;
+        $sql = "SELECT calldate, src, dst, disposition, duration, billsec, recording FROM cdr " . $condition . " ORDER BY calldate DESC " . $limit;
         $result = array();
         $rows = $this->db->query($sql);
         //$q->execute();

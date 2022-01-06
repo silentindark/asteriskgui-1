@@ -1,6 +1,7 @@
 <?php
+namespace app\models\sip;
 
-include __DIR__ . "/../../db/asterisk.php";
+use app\models\PAMI_AsteriskMGMT;
 
 class SipChannelsRepository {
     //Event: CoreShowChannel
@@ -22,13 +23,20 @@ class SipChannelsRepository {
     //BridgedChannel:
     //BridgedUniqueID:
 
+    private $config;
+
+    function __construct(?array $config = null)
+    {
+        $this->config = $config;
+    }
+
     public function getAll($filter) {
         $prepared_filters = array_filter($filter);
         $use_filter = !empty($prepared_filters);
         $json = array();
 
         //send asterisk management command
-        $asterisk_ami = new PAMI_AsteriskMGMT();
+        $asterisk_ami = new PAMI_AsteriskMGMT($this->config);
         $core_channels = $asterisk_ami->core_show_channels();
 
         foreach ($core_channels->getEvents() as $variable) {

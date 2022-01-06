@@ -1,7 +1,10 @@
 {
     "require": {
         "php": "~7.1",
-        "marcelog/pami": "2.*"
+        "marcelog/pami": "2.*",
+        "ext-json": "*",
+        "ext-mysqli": "*",
+        "ext-pdo": "*"
     },
     "autoload": {
         "psr-4": {

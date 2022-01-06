@@ -1,8 +1,11 @@
 <?php
-include "../../../models/diag/database.php";
+
+use app\models\diag\DiagDatabaseRepository;
+
+require_once __DIR__ . '/../../../vendor/autoload.php';
 $config = include("../../config.php");
 
-$total = new DiagDatabaseRepository();
+$total = new DiagDatabaseRepository($config);
 //error_log("ast: call command ".PHP_EOL);
 
 switch ($_SERVER["REQUEST_METHOD"]) {
@@ -12,4 +15,4 @@ switch ($_SERVER["REQUEST_METHOD"]) {
 }
 
 header("Content-Type: application/json");
-echo  json_encode($result);
+echo json_encode($result);

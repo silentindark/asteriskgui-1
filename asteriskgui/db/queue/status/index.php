@@ -1,7 +1,11 @@
 <?php
-include "../../../models/queue/status.php";
 
-$report = new QueueStatusRepository();
+use app\models\queue\QueueStatusRepository;
+
+require_once __DIR__ . '/../../../vendor/autoload.php';
+$config = include(__DIR__ . "/../../config.php");
+
+$report = new QueueStatusRepository($config);
 
 switch ($_SERVER["REQUEST_METHOD"]) {
     case "GET":
@@ -10,4 +14,4 @@ switch ($_SERVER["REQUEST_METHOD"]) {
 }
 
 header("Content-Type: application/json");
-echo  json_encode($result);
+echo json_encode($result);

@@ -1,6 +1,8 @@
 <?php
-include __DIR__ . "/../../../models/report/cdr.php";
 
+use app\models\report\ReportCdrRepository;
+
+require_once __DIR__ . '/../../../vendor/autoload.php';
 $config = include(__DIR__ . "/../../config.php");
 
 $db = new mysqli($config['MYSQL']['server'], $config['MYSQL']['username'], $config['MYSQL']['password'], $config['MYSQL']['db']);
