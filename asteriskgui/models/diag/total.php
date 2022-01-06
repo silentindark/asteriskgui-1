@@ -1,6 +1,6 @@
 <?php
 
-include dirname(__FILE__) . "/../../db/asterisk.php";
+include __DIR__ . "/../../db/asterisk.php";
 
 class DiagTotalRepository {
 

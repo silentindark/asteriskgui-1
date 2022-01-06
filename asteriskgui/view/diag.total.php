@@ -1,20 +1,17 @@
 <?php
 
-require_once 'header.php';
+$title = 'Diagnostics';
 
-echo '
+require_once 'header.php';
+?>
+
 <script src="../public/diag_total.js"></script>
 
-<header>
-    <h1>Diagnostics</h1>
-</header>
-
 <div id="but_excel"> 
-	<a href="#"><img src="../public/css/images/csv-icon.png"></a>
+	<a href="#"><img src="../public/css/images/csv-icon.png" alt="csv"></a>
 </div> 
 <div id="total" class="total"></div>
 
 <div id="content"></div>
-';
-
+<?php
 require 'footer.php';

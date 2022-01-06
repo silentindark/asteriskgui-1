@@ -1,0 +1,39 @@
+version: "3"
+services:
+
+  php-fpm:
+    build:
+      context: ./docker/php
+    volumes:
+      - .:/var/www
+    environment:
+      - DOCKER_DEV=1
+      - PHP_XDEBUG_ENABLED=1
+    restart: on-failure
+
+  nginx:
+    image: registry.is74.ru/docker/nginx:1.20.1-alpine-r1
+    depends_on:
+      - php-fpm
+    volumes:
+      - .:/var/www
+    environment:
+      - NGINX_SITE_SERVER_NAME=asteriskgui
+      - NGINX_SITE_DOCUMENT_ROOT=/var/www/asteriskgui
+    ports:
+      - "8811:80"
+    restart: on-failure
+
+  mysql:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MARIADB_USER: admin
+      MARIADB_PASSWORD: Qwestions
+      MYSQL_DATABASE: asteriskcdr
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:

@@ -1,6 +1,6 @@
 <?php
-include dirname(__FILE__) . "/../../../models/sip/peers.php";
-$config = include(dirname(__FILE__) . "/../../config.php");
+include __DIR__ . "/../../../models/sip/peers.php";
+$config = include(__DIR__ . "/../../config.php");
 
 //$db = new PDO($config["db"], $config["username"], $config["password"], $config["options"]);
 

@@ -1,5 +1,16 @@
 {
     "require": {
+        "php": "~7.1",
         "marcelog/pami": "2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\models\\": "models"
+        },
+        "classmap": [
+            "db/",
+            "models/",
+            "vendor/marcelog/pami/src/PAMI/Message/Event/ListDialPlanEvent.php"
+        ]
     }
 }

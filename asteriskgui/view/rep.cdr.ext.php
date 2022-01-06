@@ -1,27 +1,28 @@
 <?php
 
+$title = 'Report CDR';
 require_once 'header.php';
+?>
+    <script src="../public/report_cdr_ext.js"></script>
 
-echo '
-<script src="../public/report_cdr_ext.js"></script>
-
-    <div class="aheader">
-    Report CDR
-    </div>
+    <div class="aheader">Report CDR</div>
 
     <div class="config_panel">
-    <form class="form-inline" onSubmit="return myRefresh();">
-        <label class="checkbox-inline">Dates <input type="text" class="form-control" id="daterange" value=""></label>
-        <label class="checkbox-inline">Text <input type="text" class="form-control" id="searchtext" value="" ></label>
-    </form>
+        <form class="form-inline" onSubmit="return myRefresh();">
+            <label class="checkbox-inline">
+                Dates <input type="text" class="form-control" id="daterange" value="">
+            </label>
+            <label class="checkbox-inline">
+                Text <input type="text" class="form-control" id="searchtext" value="">
+            </label>
+        </form>
     </div>
 
-<div id="but_excel">
-    <a href="#"><img src="../public/css/images/csv-icon.png"></a>
-</div> 
-<div id="total" class="total"></div>
+    <div id="but_excel">
+        <a href="#"><img src="../public/css/images/csv-icon.png" alt="csv"></a>
+    </div>
+    <div id="total" class="total"></div>
 
-<div id="content"></div>
-';
-
+    <div id="content"></div>
+<?php
 require 'footer.php';
