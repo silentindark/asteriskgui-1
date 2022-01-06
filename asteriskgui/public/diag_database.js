@@ -24,7 +24,7 @@ $(function () {
             loadData: function (filter) {
                 return $.ajax({
                     type: "GET",
-                    url: "../db/diag/database",
+                    url: "/db/diag/database/",
                     data: filter,
                     success: function (data) {
                         json_data = data;  //store to global var for exporting

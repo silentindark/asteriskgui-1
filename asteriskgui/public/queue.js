@@ -17,7 +17,7 @@ $(function() {
     function RefreshData (){
         $.ajax({
             type: "GET",
-            url: "../db/queue/status",
+            url: "/db/queue/status/",
             //data: filter,
             success:function(data) {
                 json_data = data;  //store to global var for exporting

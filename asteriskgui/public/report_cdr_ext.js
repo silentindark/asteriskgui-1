@@ -50,7 +50,7 @@ $(function () {
 
 
     $("#but_excel a").click(function () {
-        window.location.replace("../db/report/cdr/download.php?start=" + start1 + "&end=" + end1 + "&text=" + text1);
+        window.location.replace("/db/report/cdr/download.php?start=" + start1 + "&end=" + end1 + "&text=" + text1);
     });
 
     DATA = null;
@@ -76,7 +76,7 @@ $(function () {
 
                 return $.ajax({
                     type: "GET",
-                    url: "../db/report/cdr/?start=" + start + "&end=" + end + "&text=" + text,
+                    url: "/db/report/cdr/?start=" + start + "&end=" + end + "&text=" + text,
                     success: function (data) {
                         json_data = data;  //store to global var for exporting
                         var counter = data.length;

@@ -60,7 +60,7 @@ $(function () {
         });
 
     $("#but_excel a").click(function () {
-        window.location.replace("../db/report/cdr/download.php?start=" + start1 + "&end=" + end1 + "&calls_limit=" + calls_limit + "&search_number=" + search_number + "&search_state=" + search_state);
+        window.location.replace("/db/report/cdr/download.php?start=" + start1 + "&end=" + end1 + "&calls_limit=" + calls_limit + "&search_number=" + search_number + "&search_state=" + search_state);
     });
 
     DATA = null;
@@ -85,7 +85,7 @@ $(function () {
 
                 return $.ajax({
                     type: "GET",
-                    url: "../db/report/cdr/?start=" + start + "&end=" + end + "&calls_limit=" + calls_limit + "&search_number=" + search_number + "&search_state=" + search_state,
+                    url: "/db/report/cdr/?start=" + start + "&end=" + end + "&calls_limit=" + calls_limit + "&search_number=" + search_number + "&search_state=" + search_state,
                     success: function (data) {
                         json_data = data;  //store to global var for exporting
                         var counter = data.length;

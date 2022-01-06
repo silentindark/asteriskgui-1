@@ -25,7 +25,7 @@ $(function() {
                 loadData: function(filter) {
                     return $.ajax({
                         type: "GET",
-                        url: "../db/report/group_ext_cdr/",
+                        url: "/db/report/group_ext_cdr/",
                         data: filter,
 			success:function(data) {
 			    	json_data = data;  //store to global var for exporting

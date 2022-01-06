@@ -24,7 +24,7 @@ $(function () {
             loadData: function (filter) {
                 return $.ajax({
                     type: "GET",
-                    url: "../db/sip/channelstat",
+                    url: "/db/sip/channelstat/",
                     data: filter,
                     success: function (data) {
                         json_data = data;  //store to global var for exporting

@@ -81,7 +81,8 @@ class PAMI_AsteriskMGMT
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('database show'));
         $this->pami_asterisk->close();
-        $raw_data = explode("\n", array_pop(explode("\r\n", $output->getRawContent())));
+        $delimitedContent = explode("\r\n", $output->getRawContent());
+        $raw_data = explode("\n", array_pop($delimitedContent));
         // do some clenup - remove last 2 elements
         unset($raw_data[count($raw_data) - 1]);
         unset($raw_data[count($raw_data) - 1]);
@@ -99,7 +100,13 @@ class PAMI_AsteriskMGMT
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('core show sysinfo'));
         $this->pami_asterisk->close();
-        $raw_data = explode("\n", array_pop(explode("\r\n", $output->getRawContent())));
+
+        $delimitedContent = explode("\r\n", $output->getRawContent());
+        $raw_data = explode(
+            "\n",
+            array_pop($delimitedContent)
+        );
+
         // do some clenup - remove last 2 elements
         $counter = count($raw_data);
         unset($raw_data[$counter - 1]);
@@ -123,7 +130,8 @@ class PAMI_AsteriskMGMT
         $this->pami_asterisk->open();
         $output = $this->pami_asterisk->send(new CommandAction('core show uptime'));
         $this->pami_asterisk->close();
-        $raw_data = explode("\n", array_pop(explode("\r\n", $output->getRawContent())));
+        $delimitedContent = explode("\r\n", $output->getRawContent());
+        $raw_data = explode("\n", array_pop($delimitedContent));
         // do some clenup - remove last element
         unset($raw_data[count($raw_data) - 1]);
         foreach ($raw_data as $line) {

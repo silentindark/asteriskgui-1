@@ -2,8 +2,11 @@
 
 namespace app\models\report;
 
+use mysqli;
+
 class ReportCdrRepository
 {
+    /** @var mysqli */
     protected $db;
 
     public function __construct($db)

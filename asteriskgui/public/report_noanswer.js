@@ -25,7 +25,7 @@ $(function() {
                 loadData: function(filter) {
                     return $.ajax({
                         type: "GET",
-                        url: "../db/report/no_answer/",
+                        url: "/db/report/no_answer/",
                         data: filter,
 			success:function(data) {
 			    	json_data = data;  //store to global var for exporting
