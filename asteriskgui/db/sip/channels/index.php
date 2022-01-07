@@ -2,7 +2,7 @@
 
 use app\models\sip\SipChannelsRepository;
 
-require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../../vendor/autoload.php';
 $config = include(__DIR__ . "/../../config.php");
 
 $sipChannels = new SipChannelsRepository($config);

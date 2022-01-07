@@ -2,7 +2,7 @@
 
 use app\models\report\ReportNoAnswerRepository;
 
-require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../../vendor/autoload.php';
 $config = include("../../config.php");
 
 $db = new PDO($config["db"], $config["username"], $config["password"], $config["options"]);

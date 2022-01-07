@@ -2,7 +2,7 @@
 
 use app\models\diag\DiagTotalRepository;
 
-require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../../vendor/autoload.php';
 $config = include("../../config.php");
 
 $total = new DiagTotalRepository($config);

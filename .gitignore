@@ -3,4 +3,4 @@
 /nbproject/private/
 composer.lock
 /asteriskgui/db/config.php
-/asteriskgui/vendor
+vendor

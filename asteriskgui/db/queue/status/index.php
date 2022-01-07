@@ -2,7 +2,7 @@
 
 use app\models\queue\QueueStatusRepository;
 
-require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../../vendor/autoload.php';
 $config = include(__DIR__ . "/../../config.php");
 
 $report = new QueueStatusRepository($config);

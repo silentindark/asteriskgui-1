@@ -13,54 +13,28 @@
  *
  */
 
+use app\models\App;
 use app\models\AuthClass;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7Server\ServerRequestCreator;
+use DI\ContainerBuilder;
 
-require_once "./vendor/autoload.php";
+require_once "../vendor/autoload.php";
 require_once './db/config.php';
 
-session_start(); //Запускаем сессии
-//
-//$psr17Factory = new Psr17Factory();
-//$creator = new ServerRequestCreator(
-//    $psr17Factory, // ServerRequestFactory
-//    $psr17Factory, // UriFactory
-//    $psr17Factory, // UploadedFileFactory
-//    $psr17Factory  // StreamFactory
-//);
-//
-//$request = $creator->fromGlobals();
-//
-//$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
-//    $r->addRoute('GET', '/article', 'get_article_handler');
-//    $r->addRoute('GET', '/queue', 'queue');
-//});
-//
-//
-//$routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
-//var_dump($routeInfo);
-//
-//// Проверяем
-//switch ($routeInfo[0]) {
-//    // Если нет страницы
-//    case FastRoute\Dispatcher::NOT_FOUND:
-//        // ... 404 Не найдена страница
-//        break;
-//    // Если нет метода для обработки
-//    case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-//        $allowedMethods = $routeInfo[1];
-//        // ... 405 Нет метода
-//        break;
-//    // Если всё нашлось
-//    case FastRoute\Dispatcher::FOUND:
-//        $handler = $routeInfo[1];
-//        $vars = $routeInfo[2];
-//        // ... Вызываем $handler с $vars
-//        break;
-//}
-//
-//die;
+$di = include __DIR__ . '/config/Di.php';
+
+$containerBuilder = new ContainerBuilder();
+$containerBuilder->useAutowiring(false);
+$containerBuilder->useAnnotations(false);
+$containerBuilder->addDefinitions($di);
+
+$container = $containerBuilder->build();
+$container->set('container', $container);
+$app = $container->get(App::class);
+$app->init();
+$app->run();
+
+
+die;
 
 /** @var string $page */
 $page = '';
@@ -92,7 +66,7 @@ if (empty($_GET["p"])) { // if some page requested, then show it, else show page
 } else {
     $page = $_GET["p"];
 }
-if(!file_exists(__DIR__ . '/view/' . $page . '.php')){
+if (!file_exists(__DIR__ . '/view/' . $page . '.php')) {
     http_response_code(404);
     die('Страница не найдена!');
 }

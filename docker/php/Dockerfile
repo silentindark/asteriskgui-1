@@ -1,1 +1,1 @@
-FROM registry.is74.ru/docker/php:7.1.33-fpm-buster-r11
+FROM registry.is74.ru/docker/php:7.4.24-fpm-buster-r1
