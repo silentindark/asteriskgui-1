@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\middlewares\TwigTemplateHtml;
 use FastRoute\Dispatcher;
 use Middlewares\Emitter;
 use Middlewares\FastRoute;
@@ -32,8 +33,6 @@ class App
 
     public function init()
     {
-        session_start(); //Запускаем сессии
-
         $this->request = $this->creator->fromGlobals();
         $this->response = $this->responseFactory->createResponse();
     }
@@ -42,6 +41,7 @@ class App
     {
         $middlewareQueue[] = new Emitter();
         $middlewareQueue[] = new FastRoute($this->dispatcher);
+        $middlewareQueue[] = new TwigTemplateHtml($this->container);
         $middlewareQueue[] = new RequestHandler($this->container);
 
         $requestHandler = new Relay($middlewareQueue);

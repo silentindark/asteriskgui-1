@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}Show queues{% endblock %}
+
+{% block head %}
+{{ parent() }}
+<script src="/public/queue.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="config_panel" id="config_panel">
+    <label><input id="na" type="checkbox">Not active</label>
+    <label><input id="empty" type="checkbox">Empty</label>
+</div>
+
+<div id="content"></div>
+{% endblock %}

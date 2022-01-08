@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% set title = 'Show database' %}
+
+{% block head %}
+{{ parent() }}
+<script src="/public/diag_database.js"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content">{{ content }}</div>
+{% endblock %}

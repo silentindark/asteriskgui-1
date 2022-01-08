@@ -18,7 +18,6 @@ use app\models\AuthClass;
 use DI\ContainerBuilder;
 
 require_once "../vendor/autoload.php";
-require_once './db/config.php';
 
 $di = include __DIR__ . '/config/Di.php';
 
@@ -29,6 +28,7 @@ $containerBuilder->addDefinitions($di);
 
 $container = $containerBuilder->build();
 $container->set('container', $container);
+/** @var App $app */
 $app = $container->get(App::class);
 $app->init();
 $app->run();

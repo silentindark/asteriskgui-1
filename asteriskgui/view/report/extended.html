@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% set title = 'Call records extended' %}
+
+{% block head %}
+{{ parent() }}
+<script src="/public/report_cdr_ext.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="config_panel">
+    <form class="form-inline" onSubmit="return myRefresh();">
+        <label class="checkbox-inline">
+            Dates <input type="text" class="form-control" id="daterange" value="">
+        </label>
+        <label class="checkbox-inline">
+            Text <input type="text" class="form-control" id="searchtext" value="">
+        </label>
+    </form>
+</div>
+
+{{ parent() }}
+
+{% endblock %}
